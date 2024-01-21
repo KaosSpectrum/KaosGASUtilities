@@ -31,6 +31,7 @@
 
 #include "KaosUtilitiesBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystemGlobals.h"
 
 bool UKaosUtilitiesBlueprintLibrary::CanActivateAbilityWithMatchingTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags)
 {
@@ -192,7 +193,53 @@ bool UKaosUtilitiesBlueprintLibrary::CanActivateAbilityByClass(UAbilitySystemCom
 	return false;
 }
 
+FKaosAbilitySetHandle UKaosUtilitiesBlueprintLibrary::GiveAbilitySetToActor(AActor* Actor, UKaosGameplayAbilitySet* Set, UObject* OptionalOverrideSourceObject)
+{
+	UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Actor);
+	return IsValid(ASC) ? Set->GiveAbilitySetTo(ASC, OptionalOverrideSourceObject) : FKaosAbilitySetHandle();
+}
 
+FKaosAbilitySetHandle UKaosUtilitiesBlueprintLibrary::GiveAbilitySetToASC(UAbilitySystemComponent* AbilitySystemComponent, UKaosGameplayAbilitySet* Set, UObject* OptionalOverrideSourceObject)
+{
+	return IsValid(AbilitySystemComponent) ? Set->GiveAbilitySetTo(AbilitySystemComponent, OptionalOverrideSourceObject) : FKaosAbilitySetHandle();
+}
+
+FKaosAbilitySetHandle UKaosUtilitiesBlueprintLibrary::GiveAbilitySetToInterface(TScriptInterface<IAbilitySystemInterface> AbilitySystemInterface, UKaosGameplayAbilitySet* Set, UObject* OptionalOverrideSourceObject)
+{
+	return IsValid(AbilitySystemInterface.GetObject()) ? Set->GiveAbilitySetToInterface(AbilitySystemInterface, OptionalOverrideSourceObject) : FKaosAbilitySetHandle();
+}
+
+void UKaosUtilitiesBlueprintLibrary::TakeAbilitySet(FKaosAbilitySetHandle& AbilitySetHandle)
+{
+	if (!AbilitySetHandle.IsValid())
+	{
+		return;
+	}
+
+	if (!AbilitySetHandle.AbilitySystemComponent->IsOwnerActorAuthoritative())
+	{
+		// Must be authoritative to give or take ability sets.
+		return;
+	}
+
+	for (const FGameplayAbilitySpecHandle& Handle : AbilitySetHandle.AbilitySpecHandles)
+	{
+		if (Handle.IsValid())
+		{
+			AbilitySetHandle.AbilitySystemComponent->ClearAbility(Handle);
+		}
+	}
+
+	for (const FActiveGameplayEffectHandle& Handle : AbilitySetHandle.GameplayEffectHandles)
+	{
+		if (Handle.IsValid())
+		{
+			AbilitySetHandle.AbilitySystemComponent->RemoveActiveGameplayEffect(Handle);
+		}
+	}
+
+	AbilitySetHandle.Reset();
+}
 
 FGameplayAbilitySpec* UKaosUtilitiesBlueprintLibrary::FindAbilitySpecByClass(UAbilitySystemComponent* AbilitySystemComponent, TSubclassOf<UGameplayAbility> AbilityClass, UObject* OptionalSourceObject)
 {
@@ -334,3 +381,5 @@ void UKaosUtilitiesBlueprintLibrary::UnblockAbilitiesWithTags(UAbilitySystemComp
 		AbilitySystemComponent->UnBlockAbilitiesWithTags(GameplayAbilityTags);
 	}
 }
+
+

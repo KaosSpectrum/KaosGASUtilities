@@ -32,11 +32,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "GameplayAbilitySpec.h"
 #include "GameplayTagContainer.h"
+#include "KaosGameplayAbilitySet.h"
 #include "UObject/Object.h"
 #include "KaosUtilitiesBlueprintLibrary.generated.h"
 
+class UKaosGameplayAbilitySet;
 class UGameplayAbility;
 class UAbilitySystemComponent;
 
@@ -137,6 +140,30 @@ public:
 	UFUNCTION(BlueprintCallable, Category="KaosGAS")
 	static void UnblockAbilitiesWithTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags);
 
+	/**
+	 * Tries to give an ability set to Actor
+	 */
+	UFUNCTION(BlueprintCallable, Category="KaosGAS")
+	static FKaosAbilitySetHandle GiveAbilitySetToActor(AActor* Actor, UKaosGameplayAbilitySet* Set, UObject* OptionalOverrideSourceObject = nullptr);
+	
+	/**
+	 * Tries to give ability set to ASC
+	 */
+	UFUNCTION(BlueprintCallable, Category="KaosGAS")
+	static FKaosAbilitySetHandle GiveAbilitySetToASC(UAbilitySystemComponent* AbilitySystemComponent, UKaosGameplayAbilitySet* Set, UObject* OptionalOverrideSourceObject = nullptr);
+
+	/**
+	 * Tries to give AbilitySet to interface owner.
+	 */
+	UFUNCTION(BlueprintCallable, Category="KaosGAS")
+	static FKaosAbilitySetHandle GiveAbilitySetToInterface(TScriptInterface<IAbilitySystemInterface> AbilitySystemInterface, UKaosGameplayAbilitySet* Set, UObject* OptionalOverrideSourceObject = nullptr);
+	
+	/**
+	 * Will unblock abilities with the supplied tags. (will affect Gameplay Ability blocking tags!)
+	 */
+	UFUNCTION(BlueprintCallable, Category="KaosGAS")
+	static void TakeAbilitySet(UPARAM(ref) FKaosAbilitySetHandle& AbilitySetHandle);
+	
 	/*
 	 * These are C++ helper functions below here.
 	 *
