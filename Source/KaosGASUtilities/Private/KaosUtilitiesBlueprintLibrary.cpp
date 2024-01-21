@@ -192,6 +192,8 @@ bool UKaosUtilitiesBlueprintLibrary::CanActivateAbilityByClass(UAbilitySystemCom
 	return false;
 }
 
+
+
 FGameplayAbilitySpec* UKaosUtilitiesBlueprintLibrary::FindAbilitySpecByClass(UAbilitySystemComponent* AbilitySystemComponent, TSubclassOf<UGameplayAbility> AbilityClass, UObject* OptionalSourceObject)
 {
 	if (AbilitySystemComponent)
@@ -315,4 +317,20 @@ bool UKaosUtilitiesBlueprintLibrary::CanApplyAttributeModifiers(UAbilitySystemCo
 		return true;
 	}
 	return false;
+}
+
+void UKaosUtilitiesBlueprintLibrary::BlockAbilitiesWithTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags)
+{
+	if (AbilitySystemComponent)
+	{
+		AbilitySystemComponent->BlockAbilitiesWithTags(GameplayAbilityTags);
+	}
+}
+
+void UKaosUtilitiesBlueprintLibrary::UnblockAbilitiesWithTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags)
+{
+	if (AbilitySystemComponent)
+	{
+		AbilitySystemComponent->UnBlockAbilitiesWithTags(GameplayAbilityTags);
+	}
 }

@@ -125,6 +125,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category="KaosGAS")
 	static bool CanApplyAttributeModifiers(UAbilitySystemComponent* AbilitySystemComponent, FGameplayEffectSpec EffectSpec);
 
+	/**
+	 * Will block abilities with the supplied tags
+	 */
+	UFUNCTION(BlueprintCallable, Category="KaosGAS")
+	static void BlockAbilitiesWithTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags);
+
+	/**
+	 * Will unblock abilities with the supplied tags. (will affect Gameplay Ability blocking tags!)
+	 */
+	UFUNCTION(BlueprintCallable, Category="KaosGAS")
+	static void UnblockAbilitiesWithTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags);
 
 	/*
 	 * These are C++ helper functions below here.
