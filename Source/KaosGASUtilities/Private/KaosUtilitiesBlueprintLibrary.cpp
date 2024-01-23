@@ -32,6 +32,7 @@
 #include "KaosUtilitiesBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
+#include "GameplayEffect.h"
 
 bool UKaosUtilitiesBlueprintLibrary::CanActivateAbilityWithMatchingTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags)
 {
@@ -142,7 +143,7 @@ bool UKaosUtilitiesBlueprintLibrary::HasAbilityWithAllTags(UAbilitySystemCompone
 	return false;
 }
 
-bool UKaosUtilitiesBlueprintLibrary::IsAbilityOnCooldownWithAllTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags)
+bool UKaosUtilitiesBlueprintLibrary::IsAbilityOnCooldownWithAllTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags, float& TimeRemaining, float& Duration)
 {
 	if (AbilitySystemComponent)
 	{
@@ -164,7 +165,27 @@ bool UKaosUtilitiesBlueprintLibrary::IsAbilityOnCooldownWithAllTags(UAbilitySyst
 				const FGameplayTagContainer* CooldownTags = Spec.Ability->GetCooldownTags();
 				if (CooldownTags && CooldownTags->Num() > 0 && AbilitySystemComponent->HasAnyMatchingGameplayTags(*CooldownTags))
 				{
-					return true;
+					FGameplayEffectQuery const Query = FGameplayEffectQuery::MakeQuery_MatchAnyOwningTags(*CooldownTags);
+					TArray< TPair<float, float> > DurationAndTimeRemaining = AbilitySystemComponent->GetActiveEffectsTimeRemainingAndDuration(Query);
+					if (DurationAndTimeRemaining.Num() > 0)
+					{
+						// Iterate over all the effects applying the cooldown (if there are, somehow, multiple) and find the longest
+						int32 BestIdx = 0;
+						float LongestTime = DurationAndTimeRemaining[0].Key;
+						for (int32 Idx = 1; Idx < DurationAndTimeRemaining.Num(); ++Idx)
+						{
+							if (DurationAndTimeRemaining[Idx].Key > LongestTime)
+							{
+								LongestTime = DurationAndTimeRemaining[Idx].Key;
+								BestIdx = Idx;
+							}
+						}
+
+						TimeRemaining = DurationAndTimeRemaining[BestIdx].Key;
+						CooldownDuration = DurationAndTimeRemaining[BestIdx].Value;
+
+						return true;
+					}
 				}
 			}
 		}
