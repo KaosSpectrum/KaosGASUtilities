@@ -57,10 +57,10 @@ public:
 	KAOSGASUTILITIES_API const TArray<FKaosAbilitySet_GameplayAbility>& GetGrantedGameplayAbilities() const { return GrantedGameplayAbilities; }
 	KAOSGASUTILITIES_API const TArray<FKaosAbilitySet_GameplayEffect>& GetGrantedGameplayEffects() const { return GrantedGameplayEffects; }
 
+protected:
 	KAOSGASUTILITIES_API virtual FKaosAbilitySetHandle GiveAbilitySetTo(UAbilitySystemComponent* ASC, UObject* OverrideSourceObject = nullptr) const;
 	KAOSGASUTILITIES_API virtual FKaosAbilitySetHandle GiveAbilitySetToInterface(TScriptInterface<IAbilitySystemInterface> AbilitySystemInterface, UObject* OverrideSourceObject = nullptr) const;
-
-protected:
+	
 	// Gameplay abilities to grant when this ability set is granted.
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta=(TitleProperty=Ability))
 	TArray<FKaosAbilitySet_GameplayAbility> GrantedGameplayAbilities;
@@ -68,4 +68,10 @@ protected:
 	// Gameplay effects to grant when this ability set is granted.
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta=(TitleProperty=GameplayEffect))
 	TArray<FKaosAbilitySet_GameplayEffect> GrantedGameplayEffects;
+
+	// Gameplay effects to grant when this ability set is granted.
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects", meta=(TitleProperty=AttributeSet))
+	TArray<FKaosAbilitySet_AttributeSet> GrantedAttributeSets;
+
+	friend class UKaosUtilitiesBlueprintLibrary;
 };

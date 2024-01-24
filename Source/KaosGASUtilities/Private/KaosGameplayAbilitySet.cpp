@@ -41,21 +41,6 @@ namespace AresAbilitySetHandle_Impl
 	static int32 GetNextQueuedHandleIdForUse() { return ++LastHandleId; }
 }
 
-void FKaosAbilitySetHandle::AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle)
-{
-	if (Handle.IsValid())
-	{
-		AbilitySpecHandles.Add(Handle);
-	}
-}
-
-void FKaosAbilitySetHandle::AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle)
-{
-	if (Handle.IsValid())
-	{
-		GameplayEffectHandles.Add(Handle);
-	}
-}
 
 UKaosGameplayAbilitySet::UKaosGameplayAbilitySet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -112,6 +97,23 @@ FKaosAbilitySetHandle UKaosGameplayAbilitySet::GiveAbilitySetTo(UAbilitySystemCo
 		OutHandle.AddGameplayEffectHandle(GameplayEffectHandle);
 	}
 
+	// Grant the attribute sets.
+	for (int32 SetIndex = 0; SetIndex < GrantedAttributeSets.Num(); ++SetIndex)
+	{
+		const FKaosAbilitySet_AttributeSet& Set = GrantedAttributeSets[SetIndex];
+
+		if (!IsValid(Set.AttributeSet))
+		{
+			UE_LOG(LogKaosUtilities, Error, TEXT("GrantedAttributes[%d] on ability set [%s] is not valid"), SetIndex, *GetNameSafe(this));
+			continue;
+		}
+
+		UAttributeSet* NewSet = NewObject<UAttributeSet>(ASC->GetOwner(), Set.AttributeSet);
+		ASC->AddSpawnedAttribute(NewSet);
+
+		OutHandle.AddAttributeSet(NewSet);
+	}
+	
 	return OutHandle;
 }
 
@@ -120,4 +122,5 @@ FKaosAbilitySetHandle UKaosGameplayAbilitySet::GiveAbilitySetToInterface(TScript
 	UAbilitySystemComponent* AresASC = Cast<UAbilitySystemComponent>(AbilitySystemInterface.GetObject());
 	return GiveAbilitySetTo(AresASC, OverrideSourceObject);
 }
+
 

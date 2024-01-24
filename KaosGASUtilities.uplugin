@@ -33,6 +33,10 @@
 		{
 			"Name": "DataValidation",
 			"Enabled": true
+		},
+		{
+			"Name": "TargetingSystem",
+			"Enabled": true
 		}
 	]
 }
