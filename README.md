@@ -1,4 +1,5 @@
-# Kaos GAS Utilities
+# Kaos Gameplay and System Utilities
 
-A small selection of useful stuff to enhance GAS without requiring to change your ability system setup.
+A small selection of useful stuff to enhance Unreal Engine.
+GAS Utilities stands for Gameplay and System Utilities.
 Only for UE5.3 and above.
