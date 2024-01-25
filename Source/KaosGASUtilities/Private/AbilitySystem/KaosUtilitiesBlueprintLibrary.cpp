@@ -1,39 +1,10 @@
-﻿// Copyright © Daniel Moss
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted (subject to the limitations in the disclaimer
-// below) provided that the following conditions are met:
-//
-// 1. Redistributions of source code must retain the above copyright notice,
-//    this list of conditions and the following disclaimer.
-//
-// 2. Redistributions in binary form must reproduce the above copyright notice,
-//    this list of conditions and the following disclaimer in the documentation
-//    and/or other materials provided with the distribution.
-//
-// 3. Neither the name of the copyright holder nor the names of its
-//    contributors may be used to endorse or promote products derived from
-//    this software without specific prior written permission.
-//
-// NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY
-// THIS LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
-// CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
-// NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-// PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+﻿// Copyright ©2024 Daniel Moss. ©2024 InterKaos Games. All rights reserved.
 
-#include "KaosUtilitiesBlueprintLibrary.h"
+#include "AbilitySystem/KaosUtilitiesBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
-#include "GameplayEffect.h"
 #include "KaosUtilitiesLogging.h"
+#include "GameplayEffect.h"
 #include "Logging/StructuredLog.h"
 
 bool UKaosUtilitiesBlueprintLibrary::CanActivateAbilityWithMatchingTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags)
@@ -100,7 +71,7 @@ void UKaosUtilitiesBlueprintLibrary::CancelAbilityWithAllTags(UAbilitySystemComp
 	{
 		//Get a copy of the ability specs.
 		TArray<FGameplayAbilitySpec> Specs = AbilitySystemComponent->GetActivatableAbilities();
-		
+
 		//Loop through all specs and find if we can activate any ability
 		for (const FGameplayAbilitySpec& Spec : Specs)
 		{
@@ -125,7 +96,7 @@ bool UKaosUtilitiesBlueprintLibrary::HasAbilityWithAllTags(UAbilitySystemCompone
 	{
 		//Get a copy of the ability specs.
 		TArray<FGameplayAbilitySpec> Specs = AbilitySystemComponent->GetActivatableAbilities();
-		
+
 		//Loop through all specs and find if we can activate any ability
 		for (const FGameplayAbilitySpec& Spec : Specs)
 		{
@@ -145,13 +116,13 @@ bool UKaosUtilitiesBlueprintLibrary::HasAbilityWithAllTags(UAbilitySystemCompone
 	return false;
 }
 
-bool UKaosUtilitiesBlueprintLibrary::IsAbilityOnCooldownWithAllTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags, float& TimeRemaining, float& Duration)
+bool UKaosUtilitiesBlueprintLibrary::IsAbilityOnCooldownWithAllTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags, float& TimeRemaining, float& CooldownDuration)
 {
 	if (AbilitySystemComponent)
 	{
 		//Get a copy of the ability specs.
 		TArray<FGameplayAbilitySpec> Specs = AbilitySystemComponent->GetActivatableAbilities();
-		
+
 		//Loop through all specs and find if we can activate any ability
 		for (const FGameplayAbilitySpec& Spec : Specs)
 		{
@@ -201,7 +172,7 @@ bool UKaosUtilitiesBlueprintLibrary::CanActivateAbilityByClass(UAbilitySystemCom
 	{
 		//Get a copy of the ability specs.
 		TArray<FGameplayAbilitySpec> Specs = AbilitySystemComponent->GetActivatableAbilities();
-		
+
 		for (const FGameplayAbilitySpec& AbilitySpec : Specs)
 		{
 			const FGameplayAbilityActorInfo* ActorInfo = AbilitySystemComponent->AbilityActorInfo.Get();
@@ -223,7 +194,7 @@ FKaosAbilitySetHandle UKaosUtilitiesBlueprintLibrary::GiveAbilitySetToActor(AAct
 		UE_LOGFMT(LogKaosUtilities, Warning, "Tried to give ability set to actor which is null");
 		return {};
 	}
-	
+
 	UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Actor);
 	if (!IsValid(ASC))
 	{
@@ -247,13 +218,13 @@ FKaosAbilitySetHandle UKaosUtilitiesBlueprintLibrary::GiveAbilitySetToASC(UAbili
 		UE_LOGFMT(LogKaosUtilities, Warning, "Tried to give ability set to AbilitySystemComponent {ASC} but the Ability Set is null", *GetNameSafe(AbilitySystemComponent));
 		return {};
 	}
-	
+
 	if (!IsValid(AbilitySystemComponent))
 	{
 		UE_LOGFMT(LogKaosUtilities, Warning, "Tried to give ability set {Set} with a null AbilitySystemComponent", Set->GetName());
 		return {};
 	}
-	
+
 	return Set->GiveAbilitySetTo(AbilitySystemComponent, OptionalOverrideSourceObject);
 }
 
@@ -264,13 +235,13 @@ FKaosAbilitySetHandle UKaosUtilitiesBlueprintLibrary::GiveAbilitySetToInterface(
 		UE_LOGFMT(LogKaosUtilities, Warning, "Tried to give ability set to AbilitySystemInterface {ASC} but the Ability Set is null", *GetNameSafe(AbilitySystemInterface.GetObject()));
 		return {};
 	}
-	
+
 	if (!IsValid(AbilitySystemInterface.GetObject()))
 	{
 		UE_LOGFMT(LogKaosUtilities, Warning, "Tried to give ability set {Set} with a invalid interface", Set->GetName());
 		return {};
 	}
-	
+
 	return Set->GiveAbilitySetToInterface(AbilitySystemInterface, OptionalOverrideSourceObject);
 }
 
@@ -284,16 +255,38 @@ void UKaosUtilitiesBlueprintLibrary::TakeAbilitySet(FKaosAbilitySetHandle& Abili
 	AbilitySetHandle.RemoveSet();
 }
 
+int32 UKaosUtilitiesBlueprintLibrary::GetAbilityLevel(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	return EffectContextHandle.GetAbilityLevel();
+}
+
+void UKaosUtilitiesBlueprintLibrary::GetAssetTags(const FGameplayEffectSpecHandle& SpecHandle, FGameplayTagContainer& OutAssetTags)
+{
+	const FGameplayEffectSpec* Spec = SpecHandle.IsValid() ? SpecHandle.Data.Get() : nullptr;
+	if (Spec)
+	{
+		Spec->GetAllAssetTags(OutAssetTags);
+	}
+}
+
+void UKaosUtilitiesBlueprintLibrary::SetLooseGameplayTagCount(UAbilitySystemComponent* AbilitySystemComponent, FGameplayTag GameplayTag, int32 NewCount)
+{
+	if (AbilitySystemComponent)
+	{
+		AbilitySystemComponent->SetLooseGameplayTagCount(GameplayTag, NewCount);
+	}
+}
+
 FGameplayAbilitySpec* UKaosUtilitiesBlueprintLibrary::FindAbilitySpecByClass(UAbilitySystemComponent* AbilitySystemComponent, TSubclassOf<UGameplayAbility> AbilityClass, UObject* OptionalSourceObject)
 {
 	if (AbilitySystemComponent)
 	{
 		//Get a copy of the ability specs.
 		TArray<FGameplayAbilitySpec> Specs = AbilitySystemComponent->GetActivatableAbilities();
-		
+
 		for (FGameplayAbilitySpec& Spec : Specs)
 		{
-			const bool bMatchesSourceObject = OptionalSourceObject != nullptr? OptionalSourceObject == Spec.SourceObject.Get() : true;
+			const bool bMatchesSourceObject = OptionalSourceObject != nullptr ? OptionalSourceObject == Spec.SourceObject.Get() : true;
 			if (Spec.Ability->GetClass() == AbilityClass && bMatchesSourceObject)
 			{
 				return &Spec;
@@ -309,10 +302,10 @@ FGameplayAbilitySpec* UKaosUtilitiesBlueprintLibrary::FindAbilitySpecWithAllAbil
 	{
 		//Get a copy of the ability specs.
 		TArray<FGameplayAbilitySpec> Specs = AbilitySystemComponent->GetActivatableAbilities();
-		
+
 		for (FGameplayAbilitySpec& Spec : Specs)
 		{
-			const bool bMatchesSourceObject = OptionalSourceObject != nullptr? OptionalSourceObject == Spec.SourceObject.Get() : true;
+			const bool bMatchesSourceObject = OptionalSourceObject != nullptr ? OptionalSourceObject == Spec.SourceObject.Get() : true;
 			if (Spec.Ability->AbilityTags.HasAll(AbilityTags) && bMatchesSourceObject)
 			{
 				return &Spec;
@@ -352,7 +345,7 @@ bool UKaosUtilitiesBlueprintLibrary::IsAbilityActive(UAbilitySystemComponent* Ab
 	{
 		//Get a copy of the ability specs.
 		TArray<FGameplayAbilitySpec> Specs = AbilitySystemComponent->GetActivatableAbilities();
-		
+
 		for (const FGameplayAbilitySpec& Spec : Specs)
 		{
 			if (Spec.Handle == InHandle)
@@ -424,5 +417,3 @@ void UKaosUtilitiesBlueprintLibrary::UnblockAbilitiesWithTags(UAbilitySystemComp
 		AbilitySystemComponent->UnBlockAbilitiesWithTags(GameplayAbilityTags);
 	}
 }
-
-

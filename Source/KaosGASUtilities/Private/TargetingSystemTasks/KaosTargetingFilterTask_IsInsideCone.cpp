@@ -1,5 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
+﻿// Copyright ©2024 Daniel Moss. ©2024 InterKaos Games. All rights reserved.
 
 #include "TargetingSystemTasks/KaosTargetingFilterTask_IsInsideCone.h"
 
@@ -8,7 +7,7 @@ bool UKaosTargetingFilterTask_IsInsideCone::ShouldFilterTarget(const FTargetingR
 	const float ConeHalfAngle = GetConeHalfAngle(TargetingHandle);
 	const FVector SourceLocation = GetSourceLocation(TargetingHandle);
 	const FVector SourceDirection = GetSourceDirection(TargetingHandle);
-	
+
 	if (const AActor* TargetActor = TargetData.HitResult.GetActor())
 	{
 		if (IsInsideCone(SourceLocation, SourceDirection, ConeHalfAngle, TargetActor->GetActorLocation()))

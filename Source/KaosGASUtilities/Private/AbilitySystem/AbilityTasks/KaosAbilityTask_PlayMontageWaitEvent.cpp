@@ -1,35 +1,6 @@
-﻿// Copyright © Daniel Moss
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted (subject to the limitations in the disclaimer
-// below) provided that the following conditions are met:
-//
-// 1. Redistributions of source code must retain the above copyright notice,
-//    this list of conditions and the following disclaimer.
-//
-// 2. Redistributions in binary form must reproduce the above copyright notice,
-//    this list of conditions and the following disclaimer in the documentation
-//    and/or other materials provided with the distribution.
-//
-// 3. Neither the name of the copyright holder nor the names of its
-//    contributors may be used to endorse or promote products derived from
-//    this software without specific prior written permission.
-//
-// NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY
-// THIS LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
-// CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
-// NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-// PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+﻿// Copyright ©2024 Daniel Moss. ©2024 InterKaos Games. All rights reserved.
 
-#include "AbilityTasks/KaosAbilityTask_PlayMontageWaitEvent.h"
+#include "AbilitySystem/AbilityTasks/KaosAbilityTask_PlayMontageWaitEvent.h"
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
@@ -37,7 +8,8 @@
 #include "GameFramework/Character.h"
 
 static bool GKaosUseAggressivePlayMontageAndWaitEventEndTask = true;
-static FAutoConsoleVariableRef CVarAggressivePlayMontageAndWaitEventEndTask(TEXT("AbilitySystem.KaosPlayMontageWaitEvent.AggressiveEndTask"), GKaosUseAggressivePlayMontageAndWaitEventEndTask, TEXT("This should be set to true in order to avoid multiple callbacks off an KaosAbilityTask_PlayMontageWaitEvent node"));
+static FAutoConsoleVariableRef CVarAggressivePlayMontageAndWaitEventEndTask(TEXT("AbilitySystem.KaosPlayMontageWaitEvent.AggressiveEndTask"), GKaosUseAggressivePlayMontageAndWaitEventEndTask,
+                                                                            TEXT("This should be set to true in order to avoid multiple callbacks off an KaosAbilityTask_PlayMontageWaitEvent node"));
 
 void UKaosAbilityTask_PlayMontageWaitEvent::OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted)
 {
@@ -47,7 +19,7 @@ void UKaosAbilityTask_PlayMontageWaitEvent::OnMontageBlendingOut(UAnimMontage* M
 		// Reset AnimRootMotionTranslationScale
 		ACharacter* Character = Cast<ACharacter>(GetAvatarActor());
 		if (Character && (Character->GetLocalRole() == ROLE_Authority ||
-							(Character->GetLocalRole() == ROLE_AutonomousProxy && Ability->GetNetExecutionPolicy() == EGameplayAbilityNetExecutionPolicy::LocalPredicted)))
+			(Character->GetLocalRole() == ROLE_AutonomousProxy && Ability->GetNetExecutionPolicy() == EGameplayAbilityNetExecutionPolicy::LocalPredicted)))
 		{
 			Character->SetAnimRootMotionTranslationScale(1.f);
 		}
@@ -110,7 +82,8 @@ void UKaosAbilityTask_PlayMontageWaitEvent::OnMontageEnded(UAnimMontage* Montage
 }
 
 UKaosAbilityTask_PlayMontageWaitEvent* UKaosAbilityTask_PlayMontageWaitEvent::CreatePlayMontageAndWaitProxyTags(UGameplayAbility* OwningAbility, FName TaskInstanceName, UAnimMontage* MontageToPlay,
-	FGameplayTagContainer EventTags, float Rate, FName StartSection, bool bStopWhenAbilityEnds, float AnimRootMotionTranslationScale, float StartTimeSeconds, bool bAllowInterruptAfterBlendOut, bool bOnlyExact)
+                                                                                                                FGameplayTagContainer EventTags, float Rate, FName StartSection, bool bStopWhenAbilityEnds,
+                                                                                                                float AnimRootMotionTranslationScale, float StartTimeSeconds, bool bAllowInterruptAfterBlendOut, bool bOnlyExact)
 {
 	UAbilitySystemGlobals::NonShipping_ApplyGlobalAbilityScaler_Rate(Rate);
 
@@ -124,14 +97,15 @@ UKaosAbilityTask_PlayMontageWaitEvent* UKaosAbilityTask_PlayMontageWaitEvent::Cr
 	MyObj->StartTimeSeconds = StartTimeSeconds;
 	MyObj->EventTags = EventTags;
 	MyObj->bOnlyExact = bOnlyExact;
-	
+
 	return MyObj;
 }
 
 UKaosAbilityTask_PlayMontageWaitEvent* UKaosAbilityTask_PlayMontageWaitEvent::CreatePlayMontageAndWaitProxy(UGameplayAbility* OwningAbility,
-                                                                                                                          FName TaskInstanceName, UAnimMontage *MontageToPlay, FGameplayTag EventTag, float Rate, FName StartSection, bool bStopWhenAbilityEnds, float AnimRootMotionTranslationScale, float StartTimeSeconds, bool bAllowInterruptAfterBlendOut, bool bOnlyExact)
+                                                                                                            FName TaskInstanceName, UAnimMontage* MontageToPlay, FGameplayTag EventTag, float Rate, FName StartSection,
+                                                                                                            bool bStopWhenAbilityEnds, float AnimRootMotionTranslationScale, float StartTimeSeconds, bool bAllowInterruptAfterBlendOut,
+                                                                                                            bool bOnlyExact)
 {
-
 	UAbilitySystemGlobals::NonShipping_ApplyGlobalAbilityScaler_Rate(Rate);
 
 	UKaosAbilityTask_PlayMontageWaitEvent* MyObj = NewAbilityTask<UKaosAbilityTask_PlayMontageWaitEvent>(OwningAbility, TaskInstanceName);
@@ -144,7 +118,7 @@ UKaosAbilityTask_PlayMontageWaitEvent* UKaosAbilityTask_PlayMontageWaitEvent::Cr
 	MyObj->StartTimeSeconds = StartTimeSeconds;
 	MyObj->EventTags = FGameplayTagContainer(EventTag);
 	MyObj->bOnlyExact = bOnlyExact;
-	
+
 	return MyObj;
 }
 
@@ -183,7 +157,7 @@ void UKaosAbilityTask_PlayMontageWaitEvent::Activate()
 				{
 					return;
 				}
-				
+
 				SingleHandle = ASC->AddGameplayEventTagContainerDelegate(EventTags, FGameplayEventTagMulticastDelegate::FDelegate::CreateUObject(this, &UKaosAbilityTask_PlayMontageWaitEvent::GameplayEventContainerCallback));
 
 				InterruptedHandle = Ability->OnGameplayAbilityCancelled.AddUObject(this, &UKaosAbilityTask_PlayMontageWaitEvent::OnGameplayAbilityCancelled);
@@ -196,7 +170,7 @@ void UKaosAbilityTask_PlayMontageWaitEvent::Activate()
 
 				ACharacter* Character = Cast<ACharacter>(GetAvatarActor());
 				if (Character && (Character->GetLocalRole() == ROLE_Authority ||
-								  (Character->GetLocalRole() == ROLE_AutonomousProxy && Ability->GetNetExecutionPolicy() == EGameplayAbilityNetExecutionPolicy::LocalPredicted)))
+					(Character->GetLocalRole() == ROLE_AutonomousProxy && Ability->GetNetExecutionPolicy() == EGameplayAbilityNetExecutionPolicy::LocalPredicted)))
 				{
 					Character->SetAnimRootMotionTranslationScale(AnimRootMotionTranslationScale);
 				}
@@ -216,7 +190,7 @@ void UKaosAbilityTask_PlayMontageWaitEvent::Activate()
 
 	if (!bPlayedMontage)
 	{
-		ABILITY_LOG(Warning, TEXT("UKaosAbilityTask_PlayMontageWaitEvent called in Ability %s failed to play montage %s; Task Instance Name %s."), *Ability->GetName(), *GetNameSafe(MontageToPlay),*InstanceName.ToString());
+		ABILITY_LOG(Warning, TEXT("UKaosAbilityTask_PlayMontageWaitEvent called in Ability %s failed to play montage %s; Task Instance Name %s."), *Ability->GetName(), *GetNameSafe(MontageToPlay), *InstanceName.ToString());
 		if (ShouldBroadcastAbilityTaskDelegates())
 		{
 			OnCancelled.Broadcast(FGameplayTag::EmptyTag, FGameplayEventData());
@@ -257,7 +231,6 @@ void UKaosAbilityTask_PlayMontageWaitEvent::OnDestroy(bool AbilityEnded)
 	}
 
 	Super::OnDestroy(AbilityEnded);
-
 }
 
 bool UKaosAbilityTask_PlayMontageWaitEvent::StopPlayingMontage()
@@ -319,4 +292,3 @@ FString UKaosAbilityTask_PlayMontageWaitEvent::GetDebugString() const
 
 	return FString::Printf(TEXT("PlayMontageAndWait. MontageToPlay: %s  (Currently Playing): %s"), *GetNameSafe(MontageToPlay), *GetNameSafe(PlayingMontage));
 }
-

@@ -1,40 +1,11 @@
-﻿// Copyright © Daniel Moss
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted (subject to the limitations in the disclaimer
-// below) provided that the following conditions are met:
-//
-// 1. Redistributions of source code must retain the above copyright notice,
-//    this list of conditions and the following disclaimer.
-//
-// 2. Redistributions in binary form must reproduce the above copyright notice,
-//    this list of conditions and the following disclaimer in the documentation
-//    and/or other materials provided with the distribution.
-//
-// 3. Neither the name of the copyright holder nor the names of its
-//    contributors may be used to endorse or promote products derived from
-//    this software without specific prior written permission.
-//
-// NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY
-// THIS LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
-// CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
-// NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-// PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-// OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-// WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-// OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-// ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+﻿// Copyright ©2024 Daniel Moss. ©2024 InterKaos Games. All rights reserved.
 
 #include "BehaviourTrees/KaosBTTask_ExecuteGameplayAbility.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
 #include "GameplayAbilitySpec.h"
 #include "GameplayAbilitySpecHandle.h"
-#include "KaosUtilitiesBlueprintLibrary.h"
+#include "AbilitySystem/KaosUtilitiesBlueprintLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 
@@ -73,21 +44,21 @@ EBTNodeResult::Type UKaosBTTask_ExecuteGameplayAbility::ExecuteTask(UBehaviorTre
 	checkSlow(OwnerComp.GetAIOwner() && OwnerComp.GetBlackboardComponent());
 
 	const UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-	
+
 	const AActor* SelectedActor = Cast<AActor>(BlackboardComp->GetValue<UBlackboardKeyType_Object>(TargetActorKey.GetSelectedKeyID()));
 	if (!SelectedActor)
 	{
 		return EBTNodeResult::Failed;
 	}
-	
+
 	FKaosBTTask_ExecuteGameplayAbilityMemory* MyMemory = CastInstanceNodeMemory<FKaosBTTask_ExecuteGameplayAbilityMemory>(NodeMemory);
-	
+
 	MyMemory->CachedAbilitySystemComponent = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(SelectedActor);
 	if (!MyMemory->CachedAbilitySystemComponent.IsValid())
 	{
 		return EBTNodeResult::Failed;
 	}
-	
+
 	TArray<FGameplayAbilitySpec*> OutSpecs;
 	MyMemory->CachedAbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(FGameplayTagContainer(AbilityToActivate), OutSpecs);
 	if (OutSpecs.Num() <= 0)
@@ -114,7 +85,7 @@ EBTNodeResult::Type UKaosBTTask_ExecuteGameplayAbility::AbortTask(UBehaviorTreeC
 		FGameplayAbilitySpec* Spec = MyMemory->CachedAbilitySystemComponent->FindAbilitySpecFromHandle(MyMemory->CachedSpecHandle);
 		if (Spec && Spec->IsActive())
 		{
-				MyMemory->CachedAbilitySystemComponent->CancelAbilityHandle(MyMemory->CachedSpecHandle);
+			MyMemory->CachedAbilitySystemComponent->CancelAbilityHandle(MyMemory->CachedSpecHandle);
 		}
 	}
 	MyMemory->CachedSpecHandle = FGameplayAbilitySpecHandle();
@@ -137,7 +108,8 @@ uint16 UKaosBTTask_ExecuteGameplayAbility::GetInstanceMemorySize() const
 
 FString UKaosBTTask_ExecuteGameplayAbility::GetStaticDescription() const
 {
-	return FString::Printf(TEXT("%s: AbilityTag: %s\nAbort Behaviour: %s"), *Super::GetStaticDescription(), *AbilityToActivate.ToString(), *StaticEnum<EKaosExecuteGameplayAbilityAbortBehaviour>()->GetNameStringByValue(static_cast<int64>(AbortBehaviour)));
+	return FString::Printf(TEXT("%s: AbilityTag: %s\nAbort Behaviour: %s"), *Super::GetStaticDescription(), *AbilityToActivate.ToString(),
+	                       *StaticEnum<EKaosExecuteGameplayAbilityAbortBehaviour>()->GetNameStringByValue(static_cast<int64>(AbortBehaviour)));
 }
 
 void UKaosBTTask_ExecuteGameplayAbility::HandleAbilityEnded(const FAbilityEndedData& AbilityEndedData, UBehaviorTreeComponent* BehaviorTreeComponent, uint8* NodeMemory)

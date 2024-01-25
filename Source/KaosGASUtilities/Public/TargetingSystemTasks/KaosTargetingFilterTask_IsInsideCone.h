@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Copyright ©2024 Daniel Moss. ©2024 InterKaos Games. All rights reserved.
 
 #pragma once
 
@@ -20,10 +20,10 @@ public:
 	//~ Begin UTargetingFilterTask_BasicFilterTemplate Interface
 	virtual bool ShouldFilterTarget(const FTargetingRequestHandle& TargetingHandle, const FTargetingDefaultResultData& TargetData) const override;
 	//~ End UTargetingFilterTask_BasicFilterTemplate Interface
-	
+
 	UFUNCTION(BlueprintNativeEvent)
 	float GetConeHalfAngle(const FTargetingRequestHandle& TargetingHandle) const;
-	
+
 protected:
 	FVector GetSourceLocation(const FTargetingRequestHandle& TargetingHandle) const;
 	FVector GetSourceDirection(const FTargetingRequestHandle& TargetingHandle) const;
