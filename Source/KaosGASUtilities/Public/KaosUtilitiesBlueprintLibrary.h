@@ -90,7 +90,7 @@ public:
 	 * has A.1 and C.1, it will return false.
 	 */
 	UFUNCTION(BlueprintCallable, Category="KaosGAS")
-	static bool IsAbilityOnCooldownWithAllTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags);
+	static bool IsAbilityOnCooldownWithAllTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags, float& TimeRemaining, float& Duration);
 
 	/**
 	 * Returns true if we can activate ability by the supplied class.

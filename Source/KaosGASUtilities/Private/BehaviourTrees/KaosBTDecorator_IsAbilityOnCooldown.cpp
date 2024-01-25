@@ -69,7 +69,8 @@ bool UKaosBTDecorator_IsAbilityOnCooldown::CalculateRawConditionValue(UBehaviorT
 		return false;
 	}
 
-	return UKaosUtilitiesBlueprintLibrary::IsAbilityOnCooldownWithAllTags(ASC, FGameplayTagContainer(AbilityTag));
+	float TimeRemaining, Duration; // Not used, but needed for the function
+	return UKaosUtilitiesBlueprintLibrary::IsAbilityOnCooldownWithAllTags(ASC, FGameplayTagContainer(AbilityTag), TimeRemaining, Duration);
 }
 
 FString UKaosBTDecorator_IsAbilityOnCooldown::GetStaticDescription() const
