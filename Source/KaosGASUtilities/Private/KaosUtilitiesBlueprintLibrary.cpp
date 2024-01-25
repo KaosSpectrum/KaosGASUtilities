@@ -33,6 +33,8 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
 #include "GameplayEffect.h"
+#include "KaosUtilitiesLogging.h"
+#include "Logging/StructuredLog.h"
 
 bool UKaosUtilitiesBlueprintLibrary::CanActivateAbilityWithMatchingTags(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTagContainer& GameplayAbilityTags)
 {
@@ -216,50 +218,70 @@ bool UKaosUtilitiesBlueprintLibrary::CanActivateAbilityByClass(UAbilitySystemCom
 
 FKaosAbilitySetHandle UKaosUtilitiesBlueprintLibrary::GiveAbilitySetToActor(AActor* Actor, UKaosGameplayAbilitySet* Set, UObject* OptionalOverrideSourceObject)
 {
+	if (!IsValid(Actor))
+	{
+		UE_LOGFMT(LogKaosUtilities, Warning, "Tried to give ability set to actor which is null");
+		return {};
+	}
+	
 	UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(Actor);
-	return IsValid(ASC) ? Set->GiveAbilitySetTo(ASC, OptionalOverrideSourceObject) : FKaosAbilitySetHandle();
+	if (!IsValid(ASC))
+	{
+		UE_LOGFMT(LogKaosUtilities, Warning, "Tried to give ability set to actor {Actor} which does not have an Ability System Component", Actor->GetName());
+		return {};
+	}
+
+	if (!IsValid(Set))
+	{
+		UE_LOGFMT(LogKaosUtilities, Warning, "Tried to give ability set to actor {Actor} but the Ability Set is null", Actor->GetName());
+		return {};
+	}
+
+	return Set->GiveAbilitySetTo(ASC, OptionalOverrideSourceObject);
 }
 
 FKaosAbilitySetHandle UKaosUtilitiesBlueprintLibrary::GiveAbilitySetToASC(UAbilitySystemComponent* AbilitySystemComponent, UKaosGameplayAbilitySet* Set, UObject* OptionalOverrideSourceObject)
 {
-	return IsValid(AbilitySystemComponent) ? Set->GiveAbilitySetTo(AbilitySystemComponent, OptionalOverrideSourceObject) : FKaosAbilitySetHandle();
+	if (!IsValid(Set))
+	{
+		UE_LOGFMT(LogKaosUtilities, Warning, "Tried to give ability set to AbilitySystemComponent {ASC} but the Ability Set is null", *GetNameSafe(AbilitySystemComponent));
+		return {};
+	}
+	
+	if (!IsValid(AbilitySystemComponent))
+	{
+		UE_LOGFMT(LogKaosUtilities, Warning, "Tried to give ability set {Set} with a null AbilitySystemComponent", Set->GetName());
+		return {};
+	}
+	
+	return Set->GiveAbilitySetTo(AbilitySystemComponent, OptionalOverrideSourceObject);
 }
 
 FKaosAbilitySetHandle UKaosUtilitiesBlueprintLibrary::GiveAbilitySetToInterface(TScriptInterface<IAbilitySystemInterface> AbilitySystemInterface, UKaosGameplayAbilitySet* Set, UObject* OptionalOverrideSourceObject)
 {
-	return IsValid(AbilitySystemInterface.GetObject()) ? Set->GiveAbilitySetToInterface(AbilitySystemInterface, OptionalOverrideSourceObject) : FKaosAbilitySetHandle();
+	if (!IsValid(Set))
+	{
+		UE_LOGFMT(LogKaosUtilities, Warning, "Tried to give ability set to AbilitySystemInterface {ASC} but the Ability Set is null", *GetNameSafe(AbilitySystemInterface.GetObject()));
+		return {};
+	}
+	
+	if (!IsValid(AbilitySystemInterface.GetObject()))
+	{
+		UE_LOGFMT(LogKaosUtilities, Warning, "Tried to give ability set {Set} with a invalid interface", Set->GetName());
+		return {};
+	}
+	
+	return Set->GiveAbilitySetToInterface(AbilitySystemInterface, OptionalOverrideSourceObject);
 }
 
 void UKaosUtilitiesBlueprintLibrary::TakeAbilitySet(FKaosAbilitySetHandle& AbilitySetHandle)
 {
 	if (!AbilitySetHandle.IsValid())
 	{
+		UE_LOGFMT(LogKaosUtilities, Warning, "Tried to remove ability set with an inavalid Ability Set Handle.");
 		return;
 	}
-
-	if (!AbilitySetHandle.AbilitySystemComponent->IsOwnerActorAuthoritative())
-	{
-		// Must be authoritative to give or take ability sets.
-		return;
-	}
-
-	for (const FGameplayAbilitySpecHandle& Handle : AbilitySetHandle.AbilitySpecHandles)
-	{
-		if (Handle.IsValid())
-		{
-			AbilitySetHandle.AbilitySystemComponent->ClearAbility(Handle);
-		}
-	}
-
-	for (const FActiveGameplayEffectHandle& Handle : AbilitySetHandle.GameplayEffectHandles)
-	{
-		if (Handle.IsValid())
-		{
-			AbilitySetHandle.AbilitySystemComponent->RemoveActiveGameplayEffect(Handle);
-		}
-	}
-
-	AbilitySetHandle.Reset();
+	AbilitySetHandle.RemoveSet();
 }
 
 FGameplayAbilitySpec* UKaosUtilitiesBlueprintLibrary::FindAbilitySpecByClass(UAbilitySystemComponent* AbilitySystemComponent, TSubclassOf<UGameplayAbility> AbilityClass, UObject* OptionalSourceObject)

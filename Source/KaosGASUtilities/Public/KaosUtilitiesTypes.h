@@ -88,6 +88,22 @@ public:
 };
 
 /**
+ * FKaosAbilitySet_GameplayEffect
+ *
+ *	Data used by the ability set to grant gameplay effects.
+ */
+USTRUCT(BlueprintType)
+struct FKaosAbilitySet_AttributeSet
+{
+	GENERATED_BODY()
+
+public:
+	// Attribute set to apply
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UAttributeSet> AttributeSet = nullptr;
+};
+
+/**
  * FKaosAbilitySetHandle
  *
  *	Data used to store handles to what has been granted by the ability set.
@@ -102,13 +118,16 @@ struct FKaosAbilitySetHandle
 		return AbilitySystemComponent.IsValid() && HandleId != 0;
 	}
 
+	void RemoveSet();
+
 private:
 	friend class UKaosGameplayAbilitySet;
 	friend class UKaosUtilitiesBlueprintLibrary;
 
 	void AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle);
 	void AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle);
-
+	void AddAttributeSet(UAttributeSet* Set);
+	
 	// Handles to the granted abilities.
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
@@ -117,6 +136,10 @@ private:
 	UPROPERTY()
 	TArray<FActiveGameplayEffectHandle> GameplayEffectHandles;
 
+	// Attribute Sets
+	UPROPERTY()
+	TArray<TObjectPtr<UAttributeSet>> AttributeSets;
+	
 	int32 HandleId = 0;
 
 	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent = nullptr;
