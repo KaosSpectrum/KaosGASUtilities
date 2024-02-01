@@ -9,6 +9,7 @@
 #include "UObject/Object.h"
 #include "KaosUtilitiesTypes.generated.h"
 
+class UAttributeSet;
 class UGameplayAbility;
 class UGameplayEffect;
 class UAbilitySystemComponent;
@@ -25,15 +26,15 @@ struct FKaosAbilitySet_GameplayAbility
 
 public:
 	// Gameplay ability to grant.
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category=Ability)
 	TSubclassOf<UGameplayAbility> Ability = nullptr;
 
 	// Level of ability to grant.
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category=Ability)
 	int32 AbilityLevel = 1;
 
 	// Tag used to process input for the ability.
-	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
+	UPROPERTY(EditDefaultsOnly, Category=Ability, Meta = (Categories = "InputTag"))
 	FGameplayTag InputTag;
 };
 
@@ -50,11 +51,11 @@ struct FKaosAbilitySet_GameplayEffect
 
 public:
 	// Gameplay effect to grant.
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category=GameplayEffect)
 	TSubclassOf<UGameplayEffect> GameplayEffect = nullptr;
 
 	// Level of gameplay effect to grant.
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category=GameplayEffect)
 	float EffectLevel = 1.0f;
 };
 
@@ -70,7 +71,7 @@ struct FKaosAbilitySet_AttributeSet
 
 public:
 	// Attribute set to apply
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category=AttributeSet)
 	TSubclassOf<UAttributeSet> AttributeSet = nullptr;
 };
 

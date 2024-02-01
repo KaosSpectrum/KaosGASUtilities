@@ -21,6 +21,10 @@ public:
 	virtual void BranchingPointNotify(FBranchingPointNotifyPayload& BranchingPointPayload) override;
 	virtual FString GetNotifyName_Implementation() const override;
 
+#if WITH_EDITOR
+	virtual bool CanBePlaced(UAnimSequenceBase* Animation) const override;
+#endif
+	
 protected:
 	UPROPERTY(EditAnywhere, Category=GameplayEvent)
 	FGameplayTag EventTag;

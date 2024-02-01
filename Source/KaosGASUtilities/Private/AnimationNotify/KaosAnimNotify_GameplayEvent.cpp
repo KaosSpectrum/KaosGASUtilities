@@ -22,6 +22,13 @@ void UKaosAnimNotify_GameplayEvent::BranchingPointNotify(FBranchingPointNotifyPa
 	}
 }
 
+#if WITH_EDITOR
+bool UKaosAnimNotify_GameplayEvent::CanBePlaced(UAnimSequenceBase* Animation) const
+{
+	return (Animation && Animation->IsA(UAnimMontage::StaticClass()));
+}
+#endif
+
 FString UKaosAnimNotify_GameplayEvent::GetNotifyName_Implementation() const
 {
 	return EventTag.ToString();

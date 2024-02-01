@@ -6,6 +6,7 @@
 
 UKaosAnimNotifyState_ApplyLooseGameplayTag::UKaosAnimNotifyState_ApplyLooseGameplayTag()
 {
+	bIsNativeBranchingPoint = true;
 }
 
 void UKaosAnimNotifyState_ApplyLooseGameplayTag::BranchingPointNotifyBegin(FBranchingPointNotifyPayload& BranchingPointPayload)
@@ -29,6 +30,13 @@ void UKaosAnimNotifyState_ApplyLooseGameplayTag::BranchingPointNotifyEnd(FBranch
 		UAbilitySystemBlueprintLibrary::RemoveLooseGameplayTags(Actor, GameplayTagsToApply, false);
 	}
 }
+
+#if WITH_EDITOR
+bool UKaosAnimNotifyState_ApplyLooseGameplayTag::CanBePlaced(UAnimSequenceBase* Animation) const
+{
+	return (Animation && Animation->IsA(UAnimMontage::StaticClass()));
+}
+#endif
 
 FString UKaosAnimNotifyState_ApplyLooseGameplayTag::GetNotifyName_Implementation() const
 {
