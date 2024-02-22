@@ -1,42 +1,42 @@
 {
-	"FileVersion": 3,
-	"Version": 1,
-	"VersionName": "1.0",
-	"FriendlyName": "KaosGASUtilities",
-	"Description": "A bunch of utilities for GAS",
-	"Category": "Other",
-	"CreatedBy": "Daniel Moss",
-	"CreatedByURL": "https://www.thegames.dev",
-	"DocsURL": "",
-	"MarketplaceURL": "",
-	"SupportURL": "",
-	"CanContainContent": true,
-	"IsBetaVersion": false,
-	"IsExperimentalVersion": false,
-	"Installed": false,
-	"Modules": [
-		{
-			"Name": "KaosGASUtilities",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		}
-	],
-	"Plugins": [
-		{
-			"Name": "GameplayAbilities",
-			"Enabled": true
-		},
-		{
-			"Name": "CharacterAI",
-			"Enabled": true
-		},
-		{
-			"Name": "DataValidation",
-			"Enabled": true
-		},
-		{
-			"Name": "TargetingSystem",
-			"Enabled": true
-		}
-	]
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "KaosGASUtilities",
+  "Description": "A bunch of utilities for GAS",
+  "Category": "Other",
+  "CreatedBy": "Daniel Moss",
+  "CreatedByURL": "https://www.thegames.dev",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "CanContainContent": true,
+  "IsBetaVersion": false,
+  "IsExperimentalVersion": false,
+  "Installed": false,
+  "Modules": [
+    {
+      "Name": "KaosGASUtilities",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "GameplayAbilities",
+      "Enabled": true
+    },
+    {
+      "Name": "CharacterAI",
+      "Enabled": true
+    },
+    {
+      "Name": "DataValidation",
+      "Enabled": true
+    },
+    {
+      "Name": "TargetingSystem",
+      "Enabled": true
+    }
+  ]
 }

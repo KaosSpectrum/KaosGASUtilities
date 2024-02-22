@@ -1,4 +1,22 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Copyright (C) 2024, Daniel Moss
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
@@ -38,7 +56,7 @@ class KAOSGASUTILITIES_API UKaosMathStatics : public UObject
 	 * @param [out] bTargetPointAdjusted True if the point was adjusted to be within the cone, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Math")
-    static void ClampPointWithinCone(const FVector& ConeOrigin, const FVector& ConeDirection, float ConeHalfAngleDegrees, UPARAM(ref) FVector& TargetPoint, bool& bTargetPointAdjusted);
+	static void ClampPointWithinCone(const FVector& ConeOrigin, const FVector& ConeDirection, float ConeHalfAngleDegrees, UPARAM(ref) FVector& TargetPoint, bool& bTargetPointAdjusted);
 
 	/**
 	 * Checks if a point is inside a cone specified by its origin, direction, and half angle.
@@ -51,7 +69,7 @@ class KAOSGASUTILITIES_API UKaosMathStatics : public UObject
 	 * @return true if the point is inside the cone, false otherwise.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Math")
-    static bool IsInCone(const FVector& ConeOrigin, const FVector& ConeDirection, float ConeHalfAngle, const FVector& Point);
+	static bool IsInCone(const FVector& ConeOrigin, const FVector& ConeDirection, float ConeHalfAngle, const FVector& Point);
 
 	/**
 	 * Calculate the distance between two actors.
@@ -61,7 +79,7 @@ class KAOSGASUTILITIES_API UKaosMathStatics : public UObject
 	 * @return The distance between the two actors.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Math")
-    static	float DistanceBetweenActors(AActor* Actor1, AActor* Actor2);
+	static float DistanceBetweenActors(AActor* Actor1, AActor* Actor2);
 
 	/**
 	 * Calculates the distance between two actors in a 2D space.
@@ -71,7 +89,7 @@ class KAOSGASUTILITIES_API UKaosMathStatics : public UObject
 	 * @return The distance between Actor1 and Actor2 in 2D space.
 	 */
 	UFUNCTION(BlueprintPure, Category = "Math")
-    static	float DistanceBetweenActors2D(AActor* Actor1, AActor* Actor2);
+	static float DistanceBetweenActors2D(AActor* Actor1, AActor* Actor2);
 
 	/**
 	 * \fn bool IsPointInsidePolygon(const FVector2D& TestPoint, const TArray<FVector2D>& PolygonPoints)

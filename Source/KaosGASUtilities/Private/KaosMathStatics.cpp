@@ -1,5 +1,22 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
+﻿// Copyright (C) 2024, Daniel Moss
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 #include "KaosMathStatics.h"
 
@@ -39,7 +56,7 @@ TArray<float> UKaosMathStatics::ExponentialDistributionRandomSampleSize(float Me
 TArray<FVector> UKaosMathStatics::GetEquidistantTargetLocationsInCone(const FVector& InMiddleTargetLocation, const FVector& InCenterLocation, float InDistBetweenTargets, int32 InNumTargets)
 {
 	const double DistFromTarget = FVector::Dist(InCenterLocation, InMiddleTargetLocation);
-	double Angle = 2 * FMath::Asin((InDistBetweenTargets/(2 * DistFromTarget)));
+	double Angle = 2 * FMath::Asin((InDistBetweenTargets / (2 * DistFromTarget)));
 	Angle = FMath::RadiansToDegrees(Angle);
 
 	const int32 NumRotationsForStartPos = InNumTargets / 2;
@@ -47,7 +64,7 @@ TArray<FVector> UKaosMathStatics::GetEquidistantTargetLocationsInCone(const FVec
 	RotationVector = RotationVector.RotateAngleAxis(NumRotationsForStartPos * Angle, FVector::UpVector);
 	if (InNumTargets % 2 == 0)
 	{
-		RotationVector = RotationVector.RotateAngleAxis(Angle/2, FVector::DownVector);
+		RotationVector = RotationVector.RotateAngleAxis(Angle / 2, FVector::DownVector);
 	}
 
 	TArray<FVector> OutVectors;

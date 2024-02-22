@@ -1,4 +1,22 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Copyright (C) 2024, Daniel Moss
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
@@ -21,9 +39,9 @@ public:
 	UKaosGameplayAbility();
 
 	virtual bool DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags,
-												   FGameplayTagContainer* OptionalRelevantTags) const override;
+	                                               FGameplayTagContainer* OptionalRelevantTags) const override;
 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags,
-									FGameplayTagContainer* OptionalRelevantTags) const override;
+	                                FGameplayTagContainer* OptionalRelevantTags) const override;
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 	virtual void SetCanBeCanceled(bool bCanBeCanceled) override;
@@ -31,7 +49,7 @@ public:
 	virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 	virtual void ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const override;
 	virtual bool CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
-	
+
 	/** Returns the cooldown tags for this ability */
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Get Cooldown Tags"), Category=Ability)
 	FGameplayTagContainer K2_GetCooldownTags() const;
@@ -43,7 +61,7 @@ public:
 	/** Checks to see if Target has the supplied tags */
 	UFUNCTION(BlueprintCallable, Category=Ability)
 	bool DoesTargetHaveTags(const AActor* Target, const FGameplayTagContainer& Tags) const;
-	
+
 	/** If the ability should be removed after activation */
 	virtual bool ShouldRemoveAfterActivation() const { return bRemoveAfterActivation; };
 
@@ -55,7 +73,7 @@ public:
 
 	/** Returns true is ability is blocked by tags */
 	virtual bool IsAbilityBlockedByTags(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo) const;
-	
+
 	/** If the ability starts on cooldown */
 	virtual bool DoesStartOnCooldown() const { return bStartWithCooldown; }
 
@@ -64,26 +82,28 @@ public:
 
 	/** Does the cost only apply on hit */
 	virtual bool DoesApplyCostOnlyOnHit() const { return bOnlyApplyCostOnHit; }
-	
+
 	/** Allows child classes to handle adding additional relevent info. */
-	virtual void NotifyAbilityBlocked(const FGameplayTagContainer& AbilitySystemComponentTags, FGameplayTagContainer* OptionalRelevantTags) const { }
-	
+	virtual void NotifyAbilityBlocked(const FGameplayTagContainer& AbilitySystemComponentTags, FGameplayTagContainer* OptionalRelevantTags) const
+	{
+	}
+
 	/** Called to try to active the passive ability */
 	virtual void TryActivatePassiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
-	
+
 	/** Called when the ability fails to activate */
 	virtual void NativeOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const;
 
 	/** Called when a pawn avatar is set */
 	virtual void OnPawnAvatarSet();
-	
+
 	/** Called when a passive ability fails to activate */
 	UFUNCTION()
 	void NotifyFailedToActivatePassiveAbility() const;
 
 	/** Used to determine if ability target data hit a target */
 	virtual bool DetermineIfAbilityHitTarget(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const;
-	
+
 protected:
 	/** If the ability starts on cooldown already */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Advanced)
@@ -104,7 +124,7 @@ protected:
 	// If we apply the cost GE only on hits or all the time.
 	UPROPERTY(EditDefaultsOnly, Category = Costs)
 	bool bOnlyApplyCostOnHit;
-	
+
 	/** Called when this ability is granted to the ability system component. */
 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "On Ability Added")
 	void K2_OnAbilityAdded();
@@ -112,7 +132,7 @@ protected:
 	/** Called when the ability system is initialized with a pawn avatar. */
 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "OnPawnAvatarSet")
 	void K2_OnPawnAvatarSet();
-	
+
 	/** Called when this ability is removed from the ability system component. */
 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "On Ability Removed")
 	void K2_OnAbilityRemoved();
@@ -120,14 +140,14 @@ protected:
 	/** Called when the ability fails to activate */
 	UFUNCTION(BlueprintImplementableEvent, Category=Ability, meta = (DisplayName = "On Ability Failed To Activate"))
 	void K2_OnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const;
-	
+
 	/** Called when a passive ability fails to activate */
 	UFUNCTION(BlueprintImplementableEvent, Category = Ability, DisplayName = "Failed to Activate Passive Ability")
 	void K2_FailedToActivatePassiveAbility() const;
-	
+
 	/** Check if ability is blocked by tags */
 	UFUNCTION(BlueprintCallable, Category=Ability, DisplayName = "IsAbilityBlockedByTags")
 	bool K2_IsAbilityBlockedByTags() const;
-	
+
 	friend class UKaosAbilitySystemComponent;
 };
