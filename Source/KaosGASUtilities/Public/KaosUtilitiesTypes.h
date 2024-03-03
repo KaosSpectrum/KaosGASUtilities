@@ -142,3 +142,25 @@ private:
 		HandleId = 0;
 	}
 };
+
+USTRUCT(BlueprintType)
+struct FKaosAttributeInitializationKey
+{
+	GENERATED_BODY()
+
+public:
+	FName GetAttributeInitCategory() const { return AttributeInitCategory; }
+	FName GetAttributeInitSubCategory() const { return AttributeInitSubCategory; }
+	bool IsValid() const { return !AttributeInitCategory.IsNone() && !AttributeInitSubCategory.IsNone(); }
+	
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName AttributeInitCategory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName AttributeInitSubCategory;
+
+#if WITH_EDITOR
+	friend class FKaosAttributeInitKeyCustomization;
+#endif
+};
