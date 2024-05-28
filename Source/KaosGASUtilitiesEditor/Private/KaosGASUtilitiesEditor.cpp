@@ -21,14 +21,36 @@
 #include "KaosGASUtilitiesEditor.h"
 
 #include "FKaosAttributeInitKeyCustomization.h"
+#include "AbilitySystem/KaosAbilitySystemGlobals.h"
 
 #define LOCTEXT_NAMESPACE "FKaosGASUtilitiesEditorModule"
+
+FText FKaosGASUtilitiesEditorModule::Menu_ReloadAttributesText()
+{
+	return LOCTEXT("ReloadAttributeText", "Reload Attribute Tables..");
+}
+void FKaosGASUtilitiesEditorModule::Menu_ReloadAttributes()
+{
+	UKaosAbilitySystemGlobals::Get().ReloadAttributeDefaults();
+}
 
 void FKaosGASUtilitiesEditorModule::StartupModule()
 {
 	// Register the details customizer
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.RegisterCustomPropertyTypeLayout("KaosAttributeInitializationKey", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FKaosAttributeInitKeyCustomization::MakeInstance));
+
+	{
+		UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("LevelEditor.MainMenu.Tools");
+		FToolMenuSection& Section = Menu->AddSection("KaosCore", LOCTEXT("KaosGASUtilities", "KaosGASUtilities"));
+		Section.AddEntry(FToolMenuEntry::InitMenuEntry(
+			"ReloadAttributeTables",
+			TAttribute<FText>::Create(&FKaosGASUtilitiesEditorModule::Menu_ReloadAttributesText),
+			LOCTEXT("ReloadAttributeTables", "Reload Attribute Tables"),
+			FSlateIcon(FAppStyle::GetAppStyleSetName(), "DeveloperTools.MenuIcon"),
+			FUIAction(FExecuteAction::CreateStatic(&FKaosGASUtilitiesEditorModule::Menu_ReloadAttributes))
+		));
+	}
 }
 
 void FKaosGASUtilitiesEditorModule::ShutdownModule()
@@ -36,6 +58,9 @@ void FKaosGASUtilitiesEditorModule::ShutdownModule()
 	// Unregister the details customizer
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	PropertyModule.UnregisterCustomPropertyTypeLayout("KaosAttributeInitializationKey");
+
+	// remove menu extension
+	UToolMenus::UnregisterOwner(this);
 }
 
 #undef LOCTEXT_NAMESPACE

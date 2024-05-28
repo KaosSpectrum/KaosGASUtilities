@@ -26,6 +26,8 @@
 class FKaosGASUtilitiesEditorModule : public IModuleInterface
 {
 public:
+   static  FText Menu_ReloadAttributesText();
+    static void Menu_ReloadAttributes();
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
 };

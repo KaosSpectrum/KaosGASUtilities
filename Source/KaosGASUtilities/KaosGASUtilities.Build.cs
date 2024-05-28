@@ -55,7 +55,8 @@ public class KaosGASUtilities : ModuleRules
 				"NavigationSystem",
 				"GameplayAbilities",
 				"GameplayTags",
-				"GameplayTasks", "TargetingSystem",
+				"NetCore",
+				"GameplayTasks", "TargetingSystem"
 				// ... add other public dependencies that you statically link with here ...
 			}
 		);

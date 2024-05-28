@@ -30,7 +30,7 @@
  * Behaviour to do when the Behaviour Tree task is aborted
  */
 UENUM(BlueprintType)
-enum class EKaosExecuteGameplayAbilityAbortBehaviour
+enum class EKaosExecuteGameplayAbilityAbortBehaviour : uint8
 {
 	CancelAbility UMETA(DisplayName = "Cancel Ability on Abort"),
 	Nothing UMETA(DisplayName = "Do Nothing on Abort")

@@ -1,6 +1,5 @@
 ﻿// Copyright (C) 2024, Daniel Moss
 // 
-// 
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
@@ -8,10 +7,8 @@
 // and/or sell copies of the Software, and to permit persons to whom the
 // Software is furnished to do so, subject to the following conditions:
 // 
-// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
 // 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -20,38 +17,24 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
+#pragma once
 
-using UnrealBuildTool;
+#include "CoreMinimal.h"
+#include "UObject/Object.h"
+#include "KaosGASUtilitiesFactories.generated.h"
 
-public class KaosGASUtilitiesEditor : ModuleRules
+UCLASS(hidecategories = Object, MinimalAPI)
+class UKaosGASUtilitiesAbilitySetFactory : public UFactory
 {
-    public KaosGASUtilitiesEditor(ReadOnlyTargetRules Target) : base(Target)
-    {
-        PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+	GENERATED_UCLASS_BODY()
+	//~ Begin UFactory Interface
+	virtual UObject* FactoryCreateNew(UClass* Class, UObject* InParent, FName Name, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn) override;
+	virtual FText GetDisplayName() const override;
 
-        PublicDependencyModuleNames.AddRange(
-            new string[]
-            {
-                "Core", "UnrealEd",
-            }
-        );
+	virtual bool ShouldShowInNewMenu() const override
+	{
+		return true;
+	}
 
-        PrivateDependencyModuleNames.AddRange(
-            new string[]
-            {
-                "CoreUObject",
-                "Engine",
-                "Slate",
-                "SlateCore",
-                "GameplayAbilities",
-                "GameplayAbilitiesEditor",
-                "PropertyEditor",
-                "GameplayTasks",
-                "GameplayTasksEditor",
-                "GameplayTags",
-                "ToolMenus",
-                "GameplayTagsEditor", "KaosGASUtilities"
-            }
-        );
-    }
-}
+	//~ End UFactory Interface	
+};

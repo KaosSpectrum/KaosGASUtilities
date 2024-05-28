@@ -20,35 +20,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystemGlobals.h"
-#include "KaosAttributeSet.h"
-#include "KaosUtilitiesTypes.h"
+#include "AssetDefinitionDefault.h"
 #include "UObject/Object.h"
-#include "KaosAbilitySystemGlobals.generated.h"
+#include "KaosGASUtilitiesAssetActions.generated.h"
 
-/**
- * 
- */
 UCLASS()
-class KAOSGASUTILITIES_API UKaosAbilitySystemGlobals : public UAbilitySystemGlobals
+class UKaosGASUtilitiesAbilitySetAssetDefinition : public UAssetDefinitionDefault
 {
 	GENERATED_BODY()
 
 public:
-	static UKaosAbilitySystemGlobals& Get() { return *Cast<UKaosAbilitySystemGlobals>(IGameplayAbilitiesModule::Get().GetAbilitySystemGlobals()); }
-	
-	TArray<FSoftObjectPath> GetCurveInitTables() const { return GlobalAttributeSetDefaultsTableNames; }
+	// UAssetDefinition Begin
+	virtual FText GetAssetDisplayName() const override;
+	virtual FText GetObjectDisplayNameText(UObject* Object) const override;
+	virtual FLinearColor GetAssetColor() const override { return FLinearColor(FColor(80, 123, 72)); }
+	virtual TSoftClassPtr<UObject> GetAssetClass() const override;
 
-	FKaosAttributeSetInitter* GetKaosAttributeSetInitter() const;
+	virtual TConstArrayView<FAssetCategoryPath> GetAssetCategories() const override;
 
-	void InitAttributeSetDefaults(UAbilitySystemComponent* AbilitySystemComponent, const FKaosAttributeInitializationKey& Key, int32 Level, bool bInitialInit);
-	void ApplyAttributeSetDefaults(UAbilitySystemComponent* AbilitySystemComponent, FGameplayAttribute& InAttribute, const FKaosAttributeInitializationKey& Key, int32 Level);
-	TArray<float> GetAttributeSetValues(UClass* AttributeSetClass, FProperty* AttributeProperty, const FKaosAttributeInitializationKey& Key) const;
-
-	virtual TSharedPtr<FKaosAttributeBasics> AllocKaosAttributeBasics() const;
-	
-	virtual void ReloadAttributeDefaults() override;
-
-protected:
-	virtual void AllocAttributeSetInitter() override;
+	// UAssetDefinition End
 };

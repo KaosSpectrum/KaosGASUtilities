@@ -1,6 +1,5 @@
 ﻿// Copyright (C) 2024, Daniel Moss
 // 
-// 
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
@@ -8,10 +7,8 @@
 // and/or sell copies of the Software, and to permit persons to whom the
 // Software is furnished to do so, subject to the following conditions:
 // 
-// 
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
 // 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -20,38 +17,28 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
+#include "KaosGASUtilitiesFactories.h"
 
-using UnrealBuildTool;
+#include "AbilitySystem/KaosGameplayAbilitySet.h"
 
-public class KaosGASUtilitiesEditor : ModuleRules
+UKaosGASUtilitiesAbilitySetFactory::UKaosGASUtilitiesAbilitySetFactory(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-    public KaosGASUtilitiesEditor(ReadOnlyTargetRules Target) : base(Target)
-    {
-        PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+	SupportedClass = UKaosGameplayAbilitySet::StaticClass();
 
-        PublicDependencyModuleNames.AddRange(
-            new string[]
-            {
-                "Core", "UnrealEd",
-            }
-        );
+	bCreateNew = true;
+	bEditorImport = false;
+	bEditAfterNew = true;
+}
 
-        PrivateDependencyModuleNames.AddRange(
-            new string[]
-            {
-                "CoreUObject",
-                "Engine",
-                "Slate",
-                "SlateCore",
-                "GameplayAbilities",
-                "GameplayAbilitiesEditor",
-                "PropertyEditor",
-                "GameplayTasks",
-                "GameplayTasksEditor",
-                "GameplayTags",
-                "ToolMenus",
-                "GameplayTagsEditor", "KaosGASUtilities"
-            }
-        );
-    }
+UObject* UKaosGASUtilitiesAbilitySetFactory::FactoryCreateNew(UClass* Class, UObject* InParent, FName Name, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn)
+{
+	UKaosGameplayAbilitySet* Object = NewObject<UKaosGameplayAbilitySet>(InParent, Name, Flags);
+
+	return Object;
+}
+
+FText UKaosGASUtilitiesAbilitySetFactory::GetDisplayName() const
+{
+	return FText::FromString("Gameplay Ability Set");
 }

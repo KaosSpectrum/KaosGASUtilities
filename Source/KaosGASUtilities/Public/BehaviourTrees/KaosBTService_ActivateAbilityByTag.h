@@ -29,7 +29,7 @@
  * Behaviour to do when the Behaviour Service ceases relevance
  */
 UENUM(BlueprintType)
-enum class EKaosActivateAbilityByTagOnCeaseRelevanceBehaviour
+enum class EKaosActivateAbilityByTagOnCeaseRelevanceBehaviour : uint8
 {
 	CancelAbility UMETA(DisplayName = "Cancel ability when service not relevant"),
 	Nothing UMETA(DisplayName = "Do Nothing when service not relevant")
