@@ -50,6 +50,7 @@ public class KaosGASUtilitiesEditor : ModuleRules
                 "GameplayTasksEditor",
                 "GameplayTags",
                 "ToolMenus",
+                "AssetDefinition",
                 "GameplayTagsEditor", "KaosGASUtilities"
             }
         );
