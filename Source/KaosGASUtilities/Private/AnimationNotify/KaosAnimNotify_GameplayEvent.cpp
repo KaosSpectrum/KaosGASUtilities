@@ -33,7 +33,8 @@ void UKaosAnimNotify_GameplayEvent::BranchingPointNotify(FBranchingPointNotifyPa
 
 	if (USkeletalMeshComponent* MeshComp = BranchingPointPayload.SkelMeshComponent)
 	{
-		if (AActor* Actor = MeshComp->GetOwner())
+		AActor* Actor = MeshComp->GetOwner();
+		if (IAbilitySystemInterface* ASCInterface = Cast<IAbilitySystemInterface>(Actor))
 		{
 			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Actor, EventTag, FGameplayEventData());
 		}
