@@ -24,6 +24,7 @@
 #include "ActiveGameplayEffectHandle.h"
 #include "GameplayAbilitySpecHandle.h"
 #include "GameplayTagContainer.h"
+#include "Templates/SubclassOf.h"
 #include "UObject/Object.h"
 #include "KaosUtilitiesTypes.generated.h"
 

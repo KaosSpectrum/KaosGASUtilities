@@ -23,6 +23,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
 #include "AbilitySystemLog.h"
+#include "Animation/AnimInstance.h"
 #include "GameFramework/Character.h"
 
 static bool GKaosUseAggressivePlayMontageAndWaitEventEndTask = true;

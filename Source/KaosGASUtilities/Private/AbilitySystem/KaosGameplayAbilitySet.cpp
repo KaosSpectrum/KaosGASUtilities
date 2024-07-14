@@ -19,7 +19,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "AbilitySystem/KaosGameplayAbilitySet.h"
-
 #include "AbilitySystemComponent.h"
 #include "GameplayEffect.h"
 #include "KaosUtilitiesLogging.h"

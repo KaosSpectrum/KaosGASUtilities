@@ -21,6 +21,9 @@
 #include "AnimationNotify/KaosAnimNotifyState_ApplyLooseGameplayTag.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Animation/AnimMontage.h"
+#include "Animation/AnimNotifies/AnimNotify.h"
+#include "Components/SkeletalMeshComponent.h"
 
 UKaosAnimNotifyState_ApplyLooseGameplayTag::UKaosAnimNotifyState_ApplyLooseGameplayTag()
 {

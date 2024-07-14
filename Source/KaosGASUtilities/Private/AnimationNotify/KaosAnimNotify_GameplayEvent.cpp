@@ -21,6 +21,9 @@
 #include "AnimationNotify/KaosAnimNotify_GameplayEvent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemInterface.h"
+#include "Animation/AnimMontage.h"
+#include "Components/SkeletalMeshComponent.h"
 
 UKaosAnimNotify_GameplayEvent::UKaosAnimNotify_GameplayEvent()
 {
@@ -34,7 +37,7 @@ void UKaosAnimNotify_GameplayEvent::BranchingPointNotify(FBranchingPointNotifyPa
 	if (USkeletalMeshComponent* MeshComp = BranchingPointPayload.SkelMeshComponent)
 	{
 		AActor* Actor = MeshComp->GetOwner();
-		if (IAbilitySystemInterface* ASCInterface = Cast<IAbilitySystemInterface>(Actor))
+		if (Actor && Actor->Implements<UAbilitySystemInterface>())
 		{
 			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Actor, EventTag, FGameplayEventData());
 		}

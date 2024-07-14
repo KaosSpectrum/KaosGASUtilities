@@ -219,7 +219,7 @@ bool UKaosAbilitySystemComponent::IsAbilityTagBlocked(FGameplayTag AbilityTag)
 }
 
 
-void UKaosAbilitySystemComponent::CancelAbilityWithAllTags(const FGameplayTagContainer& GameplayAbilityTags)
+void UKaosAbilitySystemComponent::CancelAbilityWithAllTags(const FGameplayTagContainer GameplayAbilityTags)
 {
 	ABILITYLIST_SCOPE_LOCK();
 	
@@ -239,7 +239,7 @@ void UKaosAbilitySystemComponent::CancelAbilityWithAllTags(const FGameplayTagCon
 	}
 }
 
-bool UKaosAbilitySystemComponent::IsAbilityOnCooldownWithAllTags(const FGameplayTagContainer& GameplayAbilityTags)
+bool UKaosAbilitySystemComponent::IsAbilityOnCooldownWithAllTags(const FGameplayTagContainer GameplayAbilityTags)
 {
 	ABILITYLIST_SCOPE_LOCK();
 	
@@ -264,7 +264,7 @@ bool UKaosAbilitySystemComponent::IsAbilityOnCooldownWithAllTags(const FGameplay
 	return false;
 }
 
-bool UKaosAbilitySystemComponent::HasAbilityWithAllTags(const FGameplayTagContainer& GameplayAbilityTags)
+bool UKaosAbilitySystemComponent::HasAbilityWithAllTags(const FGameplayTagContainer GameplayAbilityTags)
 {
 	ABILITYLIST_SCOPE_LOCK();
 	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
@@ -284,7 +284,7 @@ bool UKaosAbilitySystemComponent::HasAbilityWithAllTags(const FGameplayTagContai
 	return false;
 }
 
-bool UKaosAbilitySystemComponent::CanActivateAbilityWithAllMatchingTags(const FGameplayTagContainer& GameplayAbilityTags, FGameplayTagContainer& OutFailureTags)
+bool UKaosAbilitySystemComponent::CanActivateAbilityWithAllMatchingTags(const FGameplayTagContainer GameplayAbilityTags, FGameplayTagContainer& OutFailureTags)
 {
 	ABILITYLIST_SCOPE_LOCK();
 	const FGameplayAbilityActorInfo* ActorInfo = AbilityActorInfo.Get();
@@ -385,7 +385,7 @@ bool UKaosAbilitySystemComponent::IsAbilityActiveByTags(const FGameplayTagContai
 	return false;
 }
 
-bool UKaosAbilitySystemComponent::HasActiveAbilityWithAnyMatchingTag(const FGameplayTagContainer& Tags)
+bool UKaosAbilitySystemComponent::HasActiveAbilityWithAnyMatchingTag(const FGameplayTagContainer Tags)
 {
 	TArray<FGameplayAbilitySpec> Specs = GetActivatableAbilities();
 	for (const FGameplayAbilitySpec& Spec : Specs)
@@ -403,7 +403,7 @@ bool UKaosAbilitySystemComponent::HasActiveAbilityWithAnyMatchingTag(const FGame
 	return false;
 }
 
-bool UKaosAbilitySystemComponent::HasActiveAbilityWithAllMatchingTag(const FGameplayTagContainer& Tags)
+bool UKaosAbilitySystemComponent::HasActiveAbilityWithAllMatchingTag(const FGameplayTagContainer Tags)
 {
 	TArray<FGameplayAbilitySpec> Specs = GetActivatableAbilities();
 	for (const FGameplayAbilitySpec& Spec : Specs)
@@ -421,7 +421,7 @@ bool UKaosAbilitySystemComponent::HasActiveAbilityWithAllMatchingTag(const FGame
 	return false;
 }
 
-bool UKaosAbilitySystemComponent::CanActivateAbilityWithAnyMatchingTag(const FGameplayTagContainer& GameplayAbilityTags)
+bool UKaosAbilitySystemComponent::CanActivateAbilityWithAnyMatchingTag(const FGameplayTagContainer GameplayAbilityTags)
 {
 	TArray<FGameplayAbilitySpec> Specs = GetActivatableAbilities();
 	const FGameplayAbilityActorInfo* ActorInfo = AbilityActorInfo.Get();
@@ -440,7 +440,7 @@ bool UKaosAbilitySystemComponent::CanActivateAbilityWithAnyMatchingTag(const FGa
 	return false;
 }
 
-bool UKaosAbilitySystemComponent::CanActivateAbilityWithAllMatchingTag(const FGameplayTagContainer& GameplayAbilityTags)
+bool UKaosAbilitySystemComponent::CanActivateAbilityWithAllMatchingTag(const FGameplayTagContainer GameplayAbilityTags)
 {
 	TArray<FGameplayAbilitySpec> Specs = GetActivatableAbilities();
 	const FGameplayAbilityActorInfo* ActorInfo = AbilityActorInfo.Get();

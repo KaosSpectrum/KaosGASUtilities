@@ -25,6 +25,7 @@
 #include "GameplayAbilitySpec.h"
 #include "GameplayTagContainer.h"
 #include "KaosGameplayAbilitySet.h"
+#include "Kismet/BlueprintFunctionLibrary.h"
 #include "UObject/Object.h"
 #include "KaosUtilitiesBlueprintLibrary.generated.h"
 

@@ -23,6 +23,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
 #include "GameplayTagContainer.h"
+#include "Animation/AnimNotifies/AnimNotify.h"
 #include "UObject/Object.h"
 #include "KaosAnimNotify_TriggerGameplayAbility.generated.h"
 

@@ -21,6 +21,8 @@
 #include "KaosAIBlueprintFunctionLibrary.h"
 
 #include "NavigationSystem.h"
+#include "AI/Navigation/NavAgentInterface.h"
+#include "Engine/Engine.h"
 
 TEnumAsByte<ETeamAttitude::Type> UKaosAIBlueprintFunctionLibrary::GetAttitudeTowards(const AActor* ActorA, const AActor* ActorB)
 {

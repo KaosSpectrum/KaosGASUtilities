@@ -24,6 +24,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
 #include "KaosUtilitiesTypes.h"
+#include "Engine/DataAsset.h"
 #include "UObject/Object.h"
 #include "KaosGameplayAbilitySet.generated.h"
 

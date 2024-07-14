@@ -75,49 +75,64 @@ public:
 	/** Returns the relationship for activation requirements from the supplied ability tags */
 	virtual void GetRelationshipActivationTagRequirements(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer& OutActivationRequired, FGameplayTagContainer& OutActivationBlocked) const;
 
+	/** Can we activate this ability with the supplied class */
 	UFUNCTION(BlueprintCallable)
 	bool CanActivateAbilityByClass(TSubclassOf<UGameplayAbility> AbilityClass, FGameplayTagContainer& OutFailureTags);
 
+	/** Can we activate this ability with the supplied handle */
 	UFUNCTION(BlueprintCallable)
 	bool CanActivateAbilityByHandle(const FGameplayAbilitySpecHandle& Handle, FGameplayTagContainer& OutFailureTags);
-	
+
+	/** Is this ability active with the supplied handle */
 	UFUNCTION(BlueprintCallable)
 	bool IsAbilityActive(const FGameplayAbilitySpecHandle& InHandle);
 
+	/** Is this ability active with the supplied class */
 	UFUNCTION(BlueprintCallable)
 	bool IsAbilityActiveByClass(TSubclassOf<UGameplayAbility> AbilityClass, UObject* SourceObject = nullptr);
 
+	/** Is this ability active with the supplied tags */
 	bool IsAbilityActiveByTags(const FGameplayTagContainer* WithTags = nullptr, const FGameplayTagContainer* WithoutTags = nullptr, UGameplayAbility* Ignore = nullptr);
 
+	/** Do we have an activate ability with any matching tags */
 	UFUNCTION(BlueprintCallable)
-	bool HasActiveAbilityWithAnyMatchingTag(const FGameplayTagContainer& Tags);
+	bool HasActiveAbilityWithAnyMatchingTag(const FGameplayTagContainer GameplayAbilityTags);
 
+	/** Do we have an activate ability with all matching tags */
 	UFUNCTION(BlueprintCallable)
-	bool HasActiveAbilityWithAllMatchingTag(const FGameplayTagContainer& Tags);
+	bool HasActiveAbilityWithAllMatchingTag(const FGameplayTagContainer GameplayAbilityTags);
 
+	/** Can we activate an ability with any matching tags */
 	UFUNCTION(BlueprintCallable)
-	bool CanActivateAbilityWithAnyMatchingTag(const FGameplayTagContainer& GameplayAbilityTags);
-	
-	UFUNCTION(BlueprintCallable)
-	bool CanActivateAbilityWithAllMatchingTag(const FGameplayTagContainer& GameplayAbilityTags);
+	bool CanActivateAbilityWithAnyMatchingTag(const FGameplayTagContainer GameplayAbilityTags);
 
+	/** Can we activate an ability with all matching tags */
+	UFUNCTION(BlueprintCallable)
+	bool CanActivateAbilityWithAllMatchingTag(const FGameplayTagContainer GameplayAbilityTags);
+
+	/** Do we have this attribute set? */
 	UFUNCTION(BlueprintCallable)
 	bool HasAttributeSet(TSubclassOf<UAttributeSet> AttributeClass) const;
 
+	/** Do we have this attribute set? */
 	UFUNCTION(BlueprintCallable)
 	bool IsAbilityTagBlocked(FGameplayTag AbilityTag);
 
+	/** Cancel abilitiy with all the supplied tags */
 	UFUNCTION(BlueprintCallable)
-	void CancelAbilityWithAllTags(const FGameplayTagContainer& GameplayAbilityTags);
+	void CancelAbilityWithAllTags(const FGameplayTagContainer GameplayAbilityTags);
 
+	/** Is ability on cooldown with all the tags */
 	UFUNCTION(BlueprintCallable)
-	bool IsAbilityOnCooldownWithAllTags(const FGameplayTagContainer& GameplayAbilityTags);
-	
-	UFUNCTION(BlueprintCallable)
-	bool HasAbilityWithAllTags(const FGameplayTagContainer& GameplayAbilityTags);
+	bool IsAbilityOnCooldownWithAllTags(const FGameplayTagContainer GameplayAbilityTags);
 
+	/** Have we got this ability with all the supplied tags */
 	UFUNCTION(BlueprintCallable)
-	bool CanActivateAbilityWithAllMatchingTags(const FGameplayTagContainer& GameplayTags, FGameplayTagContainer& OutFailureTags);
+	bool HasAbilityWithAllTags(const FGameplayTagContainer GameplayAbilityTags);
+
+	/** Can we activate the ability with all the supplied matching tags */
+	UFUNCTION(BlueprintCallable)
+	bool CanActivateAbilityWithAllMatchingTags(const FGameplayTagContainer GameplayAbilityTags, FGameplayTagContainer& OutFailureTags);
 
 protected:
 	

@@ -22,6 +22,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/Tasks/AbilityTask.h"
+#include "Animation/AnimMontage.h"
 #include "AnimationNotify/KaosAnimNotify_GameplayEvent.h"
 #include "UObject/Object.h"
 #include "KaosAbilityTask_PlayMontageWaitEvent.generated.h"

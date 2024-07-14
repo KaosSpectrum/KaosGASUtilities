@@ -24,6 +24,9 @@
 #include "AbilitySystemGlobals.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/KaosUtilitiesBlueprintLibrary.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
+#include "Components/SkeletalMeshComponent.h"
 
 UKaosAnimNotify_TriggerGameplayAbility::UKaosAnimNotify_TriggerGameplayAbility(): bSetNextMontageSectionIfAbilityFailed(false)
 {

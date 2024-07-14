@@ -20,6 +20,8 @@
 
 #include "TargetingSystemTasks/KaosTargetingFilterTask_IsInsideCone.h"
 
+#include "GameFramework/Actor.h"
+
 bool UKaosTargetingFilterTask_IsInsideCone::ShouldFilterTarget(const FTargetingRequestHandle& TargetingHandle, const FTargetingDefaultResultData& TargetData) const
 {
 	const float ConeHalfAngle = GetConeHalfAngle(TargetingHandle);

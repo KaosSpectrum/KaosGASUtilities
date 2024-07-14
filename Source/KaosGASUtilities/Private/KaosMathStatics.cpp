@@ -20,6 +20,8 @@
 
 #include "KaosMathStatics.h"
 
+#include "GameFramework/Actor.h"
+
 float UKaosMathStatics::TimeSpanToFloat(const FTimespan& InTimespan)
 {
 	int32 Counter = InTimespan.GetSeconds();
