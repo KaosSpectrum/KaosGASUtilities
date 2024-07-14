@@ -19,9 +19,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "AbilitySystem/KaosAbilitySystemComponent.h"
-
+#include "KaosUtilitiesLogging.h"
 #include "AbilitySystem/KaosAbilityTagRelationships.h"
 #include "AbilitySystem/KaosGameplayAbility.h"
+#include "GameFramework/Pawn.h"
 
 void UKaosAbilitySystemComponent::ApplyAbilityBlockAndCancelTags(const FGameplayTagContainer& AbilityTags, UGameplayAbility* RequestingAbility, bool bEnableBlockTags, const FGameplayTagContainer& BlockTags, bool bExecuteCancelTags,
                                                                  const FGameplayTagContainer& CancelTags)
@@ -97,6 +98,48 @@ TArray<FActiveGameplayEffectHandle> UKaosAbilitySystemComponent::GetAllActiveEff
 	return ActiveGameplayEffects.GetAllActiveEffectHandles();
 }
 
+bool UKaosAbilitySystemComponent::CanApplyAttributeModifiers(FGameplayEffectSpec EffectSpec)
+{
+	EffectSpec.CalculateModifierMagnitudes();
+
+	for (int32 ModIdx = 0; ModIdx < EffectSpec.Modifiers.Num(); ++ModIdx)
+	{
+		const FGameplayModifierInfo& ModDef = EffectSpec.Def->Modifiers[ModIdx];
+		const FModifierSpec& ModSpec = EffectSpec.Modifiers[ModIdx];
+
+		// It only makes sense to check additive operators
+		if (ModDef.ModifierOp == EGameplayModOp::Additive)
+		{
+			if (!ModDef.Attribute.IsValid())
+			{
+				continue;
+			}
+			const UAttributeSet* Set = GetAttributeSubobject(ModDef.Attribute.GetAttributeSetClass());
+			const float CurrentValue = ModDef.Attribute.GetNumericValueChecked(Set);
+			const float CostValue = ModSpec.GetEvaluatedMagnitude();
+
+			if (CurrentValue + CostValue < 0.f)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+void UKaosAbilitySystemComponent::MarkActiveGameplayEffectDirty(FActiveGameplayEffect* ActiveGE)
+{
+	if (ActiveGE)
+	{
+		ActiveGameplayEffects.MarkItemDirty(*ActiveGE);
+	}
+}
+
+void UKaosAbilitySystemComponent::CheckActiveEffectDuration(const FActiveGameplayEffectHandle& Handle)
+{
+	ActiveGameplayEffects.CheckDuration(Handle);
+}
+
 void UKaosAbilitySystemComponent::GetAbilityTargetData(const FGameplayAbilitySpecHandle AbilityHandle, FGameplayAbilityActivationInfo ActivationInfo, FGameplayAbilityTargetDataHandle& OutTargetDataHandle) const
 {
 	const TSharedPtr<FAbilityReplicatedDataCache> ReplicatedData = AbilityTargetDataMap.Find(FGameplayAbilitySpecHandleAndPredictionKey(AbilityHandle, ActivationInfo.GetActivationPredictionKey()));
@@ -126,4 +169,292 @@ void UKaosAbilitySystemComponent::HandleAbilityFailed(const UGameplayAbility* Ab
 			KaosAbility->NotifyFailedToActivatePassiveAbility();
 		}
 	}
+}
+
+bool UKaosAbilitySystemComponent::CanActivateAbilityByHandle(const FGameplayAbilitySpecHandle& Handle, FGameplayTagContainer& OutFailureTags)
+{
+	ABILITYLIST_SCOPE_LOCK();
+	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
+	{
+		const FGameplayAbilityActorInfo* ActorInfo = AbilityActorInfo.Get();
+		
+		if (AbilitySpec.Handle == Handle && AbilitySpec.Ability)
+		{
+			return AbilitySpec.Ability->CanActivateAbility(AbilitySpec.Handle, ActorInfo, nullptr, nullptr, &OutFailureTags);
+		}
+	}
+	return false;
+}
+
+bool UKaosAbilitySystemComponent::CanActivateAbilityByClass(TSubclassOf<UGameplayAbility> AbilityClass, FGameplayTagContainer& OutFailureTags)
+{
+	ABILITYLIST_SCOPE_LOCK();
+	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
+	{
+		const FGameplayAbilityActorInfo* ActorInfo = AbilityActorInfo.Get();
+		const UGameplayAbility* Ability = AbilitySpec.GetPrimaryInstance() ? AbilitySpec.GetPrimaryInstance() : AbilitySpec.Ability.Get();
+		if (Ability->GetClass() == AbilityClass)
+		{
+			return Ability->CanActivateAbility(AbilitySpec.Handle, ActorInfo, nullptr, nullptr, &OutFailureTags);
+		}
+	}
+	return false;
+}
+
+bool UKaosAbilitySystemComponent::HasAttributeSet(TSubclassOf<UAttributeSet> AttributeClass) const
+{
+	for (const UAttributeSet* Set : GetSpawnedAttributes())
+	{
+		if (Set && Set->IsA(AttributeClass))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool UKaosAbilitySystemComponent::IsAbilityTagBlocked(FGameplayTag AbilityTag)
+{
+	return AreAbilityTagsBlocked(FGameplayTagContainer(AbilityTag));
+}
+
+
+void UKaosAbilitySystemComponent::CancelAbilityWithAllTags(const FGameplayTagContainer& GameplayAbilityTags)
+{
+	ABILITYLIST_SCOPE_LOCK();
+	
+	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
+	{
+		//If ability cdo is null, we skip.
+		if (AbilitySpec.Ability == nullptr)
+		{
+			continue;
+		}
+
+		//If tags match, cancel the ability
+		if (AbilitySpec.Ability->AbilityTags.HasAll(GameplayAbilityTags) && AbilitySpec.IsActive())
+		{
+			CancelAbilityHandle(AbilitySpec.Handle);
+		}
+	}
+}
+
+bool UKaosAbilitySystemComponent::IsAbilityOnCooldownWithAllTags(const FGameplayTagContainer& GameplayAbilityTags)
+{
+	ABILITYLIST_SCOPE_LOCK();
+	
+	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
+	{
+		//If ability cdo is null, we skip.
+		if (AbilitySpec.Ability == nullptr)
+		{
+			continue;
+		}
+
+		//If tags match, check if the cooldown tags are applied to the ASC.
+		if (AbilitySpec.Ability->AbilityTags.HasAll(GameplayAbilityTags))
+		{
+			const FGameplayTagContainer* CooldownTags = AbilitySpec.Ability->GetCooldownTags();
+			if (CooldownTags && CooldownTags->Num() > 0 && HasAnyMatchingGameplayTags(*CooldownTags))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool UKaosAbilitySystemComponent::HasAbilityWithAllTags(const FGameplayTagContainer& GameplayAbilityTags)
+{
+	ABILITYLIST_SCOPE_LOCK();
+	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
+	{
+		//If ability cdo is null, we skip.
+		if (AbilitySpec.Ability == nullptr)
+		{
+			continue;
+		}
+
+		//If tags match then we have the ability
+		if (AbilitySpec.Ability->AbilityTags.HasAll(GameplayAbilityTags))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool UKaosAbilitySystemComponent::CanActivateAbilityWithAllMatchingTags(const FGameplayTagContainer& GameplayAbilityTags, FGameplayTagContainer& OutFailureTags)
+{
+	ABILITYLIST_SCOPE_LOCK();
+	const FGameplayAbilityActorInfo* ActorInfo = AbilityActorInfo.Get();
+	//Loop through all specs and find if we can activate any ability
+	for (const FGameplayAbilitySpec& Spec : ActivatableAbilities.Items)
+	{
+		//If ability cdo is null, we skip.
+		if (Spec.Ability == nullptr)
+		{
+			continue;
+		}
+
+		//If tags match and we can activate, return the call to CanActivateAbility.
+		if (Spec.Ability->AbilityTags.HasAll(GameplayAbilityTags))
+		{
+			return Spec.Ability->CanActivateAbility(Spec.Handle, ActorInfo, nullptr, nullptr, &OutFailureTags);
+		}
+	}
+	return false;
+}
+
+
+
+bool UKaosAbilitySystemComponent::IsAbilityActive(const FGameplayAbilitySpecHandle& InHandle)
+{
+	ABILITYLIST_SCOPE_LOCK();
+	const FGameplayAbilitySpec* Spec = FindAbilitySpecFromHandle(InHandle);
+	return Spec ? Spec->IsActive() : false;
+}
+
+FGameplayAbilitySpec* UKaosAbilitySystemComponent::FindAbilitySpecFromTag(FGameplayTag Tag)
+{
+	for (FGameplayAbilitySpec& Spec : ActivatableAbilities.Items)
+	{
+		if (Spec.Ability->AbilityTags.HasTagExact(Tag))
+		{
+			return &Spec;
+		}
+	}
+
+	return nullptr;
+}
+
+FGameplayAbilitySpec* UKaosAbilitySystemComponent::FindAbilitySpecByClassAndSource(TSubclassOf<UGameplayAbility> AbilityClass, UObject* SourceObject)
+{
+	for (FGameplayAbilitySpec& Spec : ActivatableAbilities.Items)
+	{
+		if (Spec.Ability->GetClass() == AbilityClass && Spec.SourceObject == SourceObject)
+		{
+			return &Spec;
+		}
+	}
+	return nullptr;
+}
+
+
+bool UKaosAbilitySystemComponent::IsAbilityActiveByClass(TSubclassOf<UGameplayAbility> AbilityClass, UObject* SourceObject)
+{
+	ABILITYLIST_SCOPE_LOCK();
+
+	FGameplayAbilitySpec* Spec;
+
+	if (SourceObject)
+	{
+		Spec = FindAbilitySpecByClassAndSource(AbilityClass, SourceObject);
+	}
+	else
+	{
+		Spec = FindAbilitySpecFromClass(AbilityClass);
+	}
+
+	if (Spec)
+	{
+		return Spec->IsActive();
+	}
+	return false;
+}
+
+bool UKaosAbilitySystemComponent::IsAbilityActiveByTags(const FGameplayTagContainer* WithTags, const FGameplayTagContainer* WithoutTags, UGameplayAbility* Ignore)
+{
+	ABILITYLIST_SCOPE_LOCK();
+
+	for (FGameplayAbilitySpec& Spec : ActivatableAbilities.Items)
+	{
+		if (!Spec.IsActive() || Spec.Ability == nullptr || Spec.Ability == Ignore)
+		{
+			continue;
+		}
+
+		const bool WithTagPass = (!WithTags || Spec.Ability->AbilityTags.HasAny(*WithTags));
+		const bool WithoutTagPass = (!WithoutTags || !Spec.Ability->AbilityTags.HasAny(*WithoutTags));
+
+		if (WithTagPass && WithoutTagPass)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool UKaosAbilitySystemComponent::HasActiveAbilityWithAnyMatchingTag(const FGameplayTagContainer& Tags)
+{
+	TArray<FGameplayAbilitySpec> Specs = GetActivatableAbilities();
+	for (const FGameplayAbilitySpec& Spec : Specs)
+	{
+		if (Spec.Ability == nullptr)
+		{
+			continue;
+		}
+
+		if (Spec.Ability->AbilityTags.HasAny(Tags) && Spec.IsActive())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool UKaosAbilitySystemComponent::HasActiveAbilityWithAllMatchingTag(const FGameplayTagContainer& Tags)
+{
+	TArray<FGameplayAbilitySpec> Specs = GetActivatableAbilities();
+	for (const FGameplayAbilitySpec& Spec : Specs)
+	{
+		if (Spec.Ability == nullptr)
+		{
+			continue;
+		}
+
+		if (Spec.Ability->AbilityTags.HasAll(Tags) && Spec.IsActive())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool UKaosAbilitySystemComponent::CanActivateAbilityWithAnyMatchingTag(const FGameplayTagContainer& GameplayAbilityTags)
+{
+	TArray<FGameplayAbilitySpec> Specs = GetActivatableAbilities();
+	const FGameplayAbilityActorInfo* ActorInfo = AbilityActorInfo.Get();
+	for (const FGameplayAbilitySpec& Spec : Specs)
+	{
+		if (Spec.Ability == nullptr)
+		{
+			continue;
+		}
+
+		if (Spec.Ability->AbilityTags.HasAny(GameplayAbilityTags) && Spec.Ability->CanActivateAbility(Spec.Handle, ActorInfo))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool UKaosAbilitySystemComponent::CanActivateAbilityWithAllMatchingTag(const FGameplayTagContainer& GameplayAbilityTags)
+{
+	TArray<FGameplayAbilitySpec> Specs = GetActivatableAbilities();
+	const FGameplayAbilityActorInfo* ActorInfo = AbilityActorInfo.Get();
+	for (const FGameplayAbilitySpec& Spec : Specs)
+	{
+		if (Spec.Ability == nullptr)
+		{
+			continue;
+		}
+
+		if (Spec.Ability->AbilityTags.HasAll(GameplayAbilityTags) && Spec.Ability->CanActivateAbility(Spec.Handle, ActorInfo))
+		{
+			return true;
+		}
+	}
+	return false;
 }

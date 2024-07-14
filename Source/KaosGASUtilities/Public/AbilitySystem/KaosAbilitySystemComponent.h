@@ -25,6 +25,7 @@
 #include "UObject/Object.h"
 #include "KaosAbilitySystemComponent.generated.h"
 
+class UKaosGameplayAbility;
 class UKaosAbilityTagRelationships;
 DECLARE_DELEGATE_OneParam(FKaosOnGiveAbility, FGameplayAbilitySpec&);
 
@@ -63,10 +64,67 @@ public:
 	/** Accessor for the OnGiveAbility delegate */
 	FKaosOnGiveAbility& GetKaosOnGiveAbilityDelegate() { return KaosOnGiveAbility; }
 
+	virtual bool CanApplyAttributeModifiers(FGameplayEffectSpec EffectSpec);
+
+	/** Marks the ActiveGameplayEffect as dirty for replication purposes */
+	void MarkActiveGameplayEffectDirty(FActiveGameplayEffect* ActiveGE);
+
+	/** Checks the active effect duration and runs any logic, checks to see if the GE is expired and removes it. */
+	void CheckActiveEffectDuration(const FActiveGameplayEffectHandle& Handle);
+	
 	/** Returns the relationship for activation requirements from the supplied ability tags */
 	virtual void GetRelationshipActivationTagRequirements(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer& OutActivationRequired, FGameplayTagContainer& OutActivationBlocked) const;
 
+	UFUNCTION(BlueprintCallable)
+	bool CanActivateAbilityByClass(TSubclassOf<UGameplayAbility> AbilityClass, FGameplayTagContainer& OutFailureTags);
+
+	UFUNCTION(BlueprintCallable)
+	bool CanActivateAbilityByHandle(const FGameplayAbilitySpecHandle& Handle, FGameplayTagContainer& OutFailureTags);
+	
+	UFUNCTION(BlueprintCallable)
+	bool IsAbilityActive(const FGameplayAbilitySpecHandle& InHandle);
+
+	UFUNCTION(BlueprintCallable)
+	bool IsAbilityActiveByClass(TSubclassOf<UGameplayAbility> AbilityClass, UObject* SourceObject = nullptr);
+
+	bool IsAbilityActiveByTags(const FGameplayTagContainer* WithTags = nullptr, const FGameplayTagContainer* WithoutTags = nullptr, UGameplayAbility* Ignore = nullptr);
+
+	UFUNCTION(BlueprintCallable)
+	bool HasActiveAbilityWithAnyMatchingTag(const FGameplayTagContainer& Tags);
+
+	UFUNCTION(BlueprintCallable)
+	bool HasActiveAbilityWithAllMatchingTag(const FGameplayTagContainer& Tags);
+
+	UFUNCTION(BlueprintCallable)
+	bool CanActivateAbilityWithAnyMatchingTag(const FGameplayTagContainer& GameplayAbilityTags);
+	
+	UFUNCTION(BlueprintCallable)
+	bool CanActivateAbilityWithAllMatchingTag(const FGameplayTagContainer& GameplayAbilityTags);
+
+	UFUNCTION(BlueprintCallable)
+	bool HasAttributeSet(TSubclassOf<UAttributeSet> AttributeClass) const;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsAbilityTagBlocked(FGameplayTag AbilityTag);
+
+	UFUNCTION(BlueprintCallable)
+	void CancelAbilityWithAllTags(const FGameplayTagContainer& GameplayAbilityTags);
+
+	UFUNCTION(BlueprintCallable)
+	bool IsAbilityOnCooldownWithAllTags(const FGameplayTagContainer& GameplayAbilityTags);
+	
+	UFUNCTION(BlueprintCallable)
+	bool HasAbilityWithAllTags(const FGameplayTagContainer& GameplayAbilityTags);
+
+	UFUNCTION(BlueprintCallable)
+	bool CanActivateAbilityWithAllMatchingTags(const FGameplayTagContainer& GameplayTags, FGameplayTagContainer& OutFailureTags);
+
 protected:
+	
+	FGameplayAbilitySpec* FindAbilitySpecFromTag(FGameplayTag Tag);
+	FGameplayAbilitySpec* FindAbilitySpecByClassAndSource(TSubclassOf<UGameplayAbility> AbilityClass, UObject* SourceObject);
+
+	
 	//Returns the ability tag relationship data asset, overridable by game's to provide a different a different asset to the default ASC one
 	virtual const UKaosAbilityTagRelationships* GetAbilityTagRelationships() const;
 
