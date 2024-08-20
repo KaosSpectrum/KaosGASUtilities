@@ -31,6 +31,7 @@ struct FKaosBTTask_ExecuteGameplayAbilityMemory
 {
 	TWeakObjectPtr<UAbilitySystemComponent> CachedAbilitySystemComponent;
 	FGameplayAbilitySpecHandle CachedSpecHandle;
+	FDelegateHandle DelegateHandle;
 };
 
 
@@ -88,7 +89,7 @@ EBTNodeResult::Type UKaosBTTask_ExecuteGameplayAbility::ExecuteTask(UBehaviorTre
 	if (MyMemory->CachedAbilitySystemComponent->TryActivateAbility(Spec->Handle))
 	{
 		MyMemory->CachedSpecHandle = Spec->Handle;
-		MyMemory->CachedAbilitySystemComponent->OnAbilityEnded.AddUObject(this, &UKaosBTTask_ExecuteGameplayAbility::HandleAbilityEnded, &OwnerComp, NodeMemory);
+		MyMemory->DelegateHandle = MyMemory->CachedAbilitySystemComponent->OnAbilityEnded.AddUObject(this, &UKaosBTTask_ExecuteGameplayAbility::HandleAbilityEnded, &OwnerComp, NodeMemory);
 		return EBTNodeResult::InProgress;
 	}
 
@@ -116,6 +117,10 @@ void UKaosBTTask_ExecuteGameplayAbility::OnTaskFinished(UBehaviorTreeComponent& 
 	Super::OnTaskFinished(OwnerComp, NodeMemory, TaskResult);
 	FKaosBTTask_ExecuteGameplayAbilityMemory* MyMemory = CastInstanceNodeMemory<FKaosBTTask_ExecuteGameplayAbilityMemory>(NodeMemory);
 	MyMemory->CachedSpecHandle = FGameplayAbilitySpecHandle();
+	if (MyMemory->CachedAbilitySystemComponent.IsValid() && MyMemory->DelegateHandle.IsValid())
+	{
+		MyMemory->CachedAbilitySystemComponent->OnAbilityEnded.Remove(MyMemory->DelegateHandle);
+	}
 	MyMemory->CachedAbilitySystemComponent.Reset();
 }
 
